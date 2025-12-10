@@ -1,49 +1,33 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { TextInput, Button, Text,Avatar } from "react-native-paper";
-
+import { Button, Text, TextInput  } from "react-native-paper";
+import AuthHeader from "../components/AuthHeader";
+import AuthTextInput from "../components/AuthTextInput";
+import PasswordInput from "../components/PasswordInput";
 
 const LoginScreen: React.FC = () => {
-
-  // Variables de estado para los campos de entrada
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
     <View style={styles.container}>
+      <AuthHeader
+        title="Bienvenido"
+        subtitle="Introduce tus credenciales para continuar"
+      />
 
-      <Avatar.Icon size={72} icon="account" style={styles.avatar} />
-
-      <Text style={styles.title}>Bienvenido</Text>
-
-      <Text style={styles.subtitle}>Introduce tus credenciales para continuar</Text>
-
-      <TextInput
+      <AuthTextInput
         label="Correo electrónico"
         value={email}
         onChangeText={setEmail}
-        mode="outlined"
         keyboardType="email-address"
         autoCapitalize="none"
-        left={<TextInput.Icon icon="email" />}
-        style={styles.input}
+        left={<TextInput.Icon icon="email" />} 
       />
 
-      <TextInput
-        label="Contraseña"
+      <PasswordInput
         value={password}
         onChangeText={setPassword}
-        mode="outlined"
-        secureTextEntry={!showPassword}
-        left={<TextInput.Icon icon="lock" />}
-        right={
-          <TextInput.Icon
-            icon={showPassword ? "eye-off" : "eye"}
-            onPress={() => setShowPassword(!showPassword)}
-          />
-        }
-        style={styles.input}
       />
 
       <Button mode="text" onPress={() => {}} style={styles.forgot}>
@@ -73,27 +57,12 @@ const LoginScreen: React.FC = () => {
   );
 };
 
-// Crea una variable de estilos para aplicarlos a los elementos
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
     justifyContent: "center",
     backgroundColor: "#fff",
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: 15,
-    fontSize: 28,
-    fontWeight: "bold"
-  },
-  subtitle: {
-    textAlign: "center",
-    marginBottom: 24,
-    color: "#666",
-  },
-  input: {
-    marginBottom: 12,
   },
   forgot: {
     alignSelf: "flex-end",
@@ -117,11 +86,8 @@ const styles = StyleSheet.create({
     color: "#6200EE",
     fontWeight: "bold",
   },
-  avatar: {
-    alignSelf: "center",
-    marginBottom: 20,
-  }
 });
 
 export default LoginScreen;
+
 
