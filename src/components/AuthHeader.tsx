@@ -19,7 +19,8 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({ title, subtitle }) => {
       />
 
       <Text style={styles.title}>{title}</Text>
-
+      
+      {/* Condicional: Se muestra subtitulo solo si existe */}
       {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
     </View>
   );
