@@ -38,7 +38,7 @@ export function FormPasswordInput<T extends FieldValues>({
           />
 
           {/* Mensaje de error */}
-          <HelperText type="error" visible={!!fieldState.error}>
+          <HelperText type="error" visible={!!fieldState.error} style={{ marginTop: -6 }}>
             {fieldState.error?.message}
           </HelperText>
         </View>

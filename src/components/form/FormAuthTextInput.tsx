@@ -56,7 +56,7 @@ export function FormAuthTextInput<T extends FieldValues>({
           />
 
           {/* Texto de error debajo del input */}
-          <HelperText type="error" visible={!!fieldState.error}>
+          <HelperText type="error" visible={!!fieldState.error} style={{ marginTop: -6 }}>
             {fieldState.error?.message}
           </HelperText>
         </View>

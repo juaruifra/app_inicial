@@ -4,16 +4,22 @@ import { Button, Text, TextInput } from "react-native-paper";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import AuthHeader from "../../components/AuthHeader";
-import { FormAuthTextInput } from "../../components/form/FormAuthTextInput";
-import { FormPasswordInput } from "../../components/form/FormPasswordInput";
+import AuthHeader from "../../src/components/AuthHeader";
+import { FormAuthTextInput } from "../../src/components/form/FormAuthTextInput";
+import { FormPasswordInput } from "../../src/components/form/FormPasswordInput";
+import { LoginFormValues, loginSchema } from "../../src/schemas/login.schema";
+import { useAuth } from "../../src/context/AuthContext";
+import { router } from "expo-router";
 
-import {
-  loginSchema,
-  LoginFormValues,
-} from "../../schemas/login.schema";
+
 
 const Login: React.FC = () => {
+
+    // Estado para mostrar errores de autenticación
+  const [authError, setAuthError] = React.useState<string | null>(null);
+
+  // Estado para desactivar el botón mientras se valida
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   /*
     useForm crea y controla el formulario
@@ -31,13 +37,36 @@ const Login: React.FC = () => {
     },
   });
 
+  const { login } = useAuth();
+
   /*
     Esta función solo se ejecuta
     si TODOS los campos son válidos
   */
-  const onSubmit = (data: LoginFormValues) => {
+  const onSubmit = async (data: LoginFormValues) => {
     console.log("Datos válidos:", data);
+
+    setAuthError(null);
+    setIsSubmitting(true);
+
+    try {
+    // Intentamos autenticar
+      await login(data.email, data.password);
+
+      // Si todo va bien, entramos a la app
+      router.replace("/home");
+    } catch (error: any) {
+      // Error real de autenticación (credenciales incorrectas)
+      setAuthError(
+        error?.message ?? "Correo o contraseña incorrectos"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+
+
 
   return (
     <View style={styles.container}>
@@ -62,6 +91,19 @@ const Login: React.FC = () => {
         name="password"
       />
 
+      {authError && (
+        <Text
+          style={{
+            color: "red",
+            marginBottom: 12,
+            textAlign: "center",
+          }}
+        >
+          {authError}
+        </Text>
+      )}
+
+
       <Button mode="text" style={styles.forgot}>
         ¿Olvidaste tu contraseña?
       </Button>
@@ -71,6 +113,8 @@ const Login: React.FC = () => {
         mode="contained"
         onPress={handleSubmit(onSubmit)}
         style={styles.button}
+        loading={isSubmitting}
+        disabled={isSubmitting}
       >
         Iniciar Sesión
       </Button>
