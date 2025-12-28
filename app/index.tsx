@@ -1,33 +1,32 @@
-// app/index.tsx
-import { useEffect } from "react";
+import { Redirect } from "expo-router";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
-import { router } from "expo-router";
-
 import { useAuth } from "../src/context/AuthContext";
 
-export default function IndexScreen() {
+export default function IndexFile() {
   // Obtenemos el usuario y el estado de carga del contexto
   const { user, isLoading } = useAuth();
 
-  useEffect(() => {
-    // Mientras estamos comprobando el storage, no hacemos nada
-    if (isLoading) return;
+  // Mientras comprobamos el storage, mostramos un loader
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
-    // Si hay usuario:  vamos a la pantalla principal
-    if (user) {
-      router.replace("/home");
-    } else {
-      // Si NO hay usuario: vamos al login
-      router.replace("/login");
-    }
-  }, [user, isLoading]);
+  // Si NO hay usuario, vamos al login
+  if (!user) {
+    return <Redirect href="/login" />;
+  }
 
-  // Mientras decidimos a dónde ir, mostramos un loader simple
-  return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" />
-    </View>
-  );
+  // Si el usuario es administrador
+  if (user.roleId === 2) {
+    return <Redirect href="/(tabs-admin)/home" />;
+  }
+
+  // Usuario normal
+  return <Redirect href="/(tabs-user)/home" />;
 }
 
 const styles = StyleSheet.create({
@@ -37,3 +36,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+

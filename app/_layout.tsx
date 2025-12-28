@@ -1,4 +1,3 @@
-// app/_layout.tsx
 import React from "react";
 import { Slot } from "expo-router";
 import {PaperProvider, MD3LightTheme, MD3DarkTheme} from "react-native-paper";

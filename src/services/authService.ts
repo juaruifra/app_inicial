@@ -5,30 +5,30 @@ import {
   clearAuthStorage,
 } from "../storage/authStorage";
 
+import { usuarios } from "../data/mockApi";
+import type { User } from "../data/mockApi";
+
 // Función auxiliar para simular tiempo de espera (latencia de red)
 const delay = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-export type User = {
-  id: string;
-  email: string;
-  name: string;
+// Credenciales SOLO para autenticación (mock)
+// En un backend real esto estaría en BD y con hash
+type AuthCredential = {
+  userId: number;
+  password: string;
 };
 
-// Usuarios de prueba
-const mockUsers = [
+// Usuarios válidos para login (modo demo)
+const credentials: AuthCredential[] = [
   {
-    id: "1",
-    email: "admin@sprintcar.com",
-    password: "123456",
-    name: "Juan Ruiz",
+    userId: 1,
+    password: "admin123",
   },
   {
-    id: "2",
-    email: "pepe@sprintcar.com",
-    password: "123456",
-    name: "Pepe",
-  }
+    userId: 2,
+    password: "pepe123",
+  },
 ];
 
 export async function loginWithEmailAndPassword(
@@ -36,32 +36,46 @@ export async function loginWithEmailAndPassword(
   password: string
 ): Promise<User> {
 
-  // Simulamos una llamada de red
-  await delay(800); // 800 ms
-  
-  const found = mockUsers.find(
-    (u) => u.email === email && u.password === password
+  // Simulamos una llamada al backend
+  await delay(800);
+
+  // Buscamos el usuario por email
+  const user = usuarios.find(
+    (u) => u.email === email
   );
 
-  if (!found) {
+  if (!user) {
+    // Si el email no existe, devolvemos un error genérico
     throw new Error("Correo o contraseña incorrectos");
   }
 
-  const user: User = {
-    id: found.id,
-    email: found.email,
-    name: found.name,
-  };
+  // Buscamos la credencial asociada a ese usuario
+  const credential = credentials.find(
+    (c) => c.userId === user.id
+  );
 
-  // Simulamos un token de backend
-  const fakeToken = "FAKE_ACCESS_TOKEN_123";
+  if (!credential) {
+    // El usuario existe pero no tiene credenciales configuradas
+    throw new Error("Credenciales no configuradas");
+  }
 
-  // Guardamos usuario y token
+  // Comprobamos si la contraseña coincide
+  if (credential.password !== password) {
+    throw new Error("Correo o contraseña incorrectos");
+  }
+
+  // Simulamos un token devuelto por el backend
+  const fakeToken = `FAKE_TOKEN_${user.id}`;
+
+  // Guardamos el usuario y el token en el almacenamiento
   await saveUser(user);
   await saveToken(fakeToken);
 
+  // Devolvemos el usuario sin password
   return user;
 }
+
+
 
 // Leer usuario persistido
 export async function getStoredUser(): Promise<User | null> {
