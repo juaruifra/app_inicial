@@ -173,7 +173,7 @@ export const clientes: Cliente[] = [
     nifCif: 'B12345678',
     telefono: '955000333',
     email: 'contacto@eventosl.com',
-    activo: true,
+    activo: false,
   },
 ];
 
