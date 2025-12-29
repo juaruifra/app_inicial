@@ -5,6 +5,7 @@ import { ActivityIndicator, FAB, Searchbar, Text } from "react-native-paper";
 import { Cliente } from "../../data/mockApi";
 import { getClientes } from "../../services/clientesService";
 import ClienteItem from "./ClienteItem";
+import { router } from "expo-router";
 
 export default function ClientesScreen() {
 
@@ -81,7 +82,17 @@ export default function ClientesScreen() {
                         data={filteredClientes}
                         keyExtractor={(item) => item.id.toString()}
                         renderItem={({ item }) => (
-                        <ClienteItem cliente={item} />
+                        <ClienteItem cliente={item} 
+                            onPress={() => {
+                                //alert("Click cliente " + item.id);
+                                //router.push(`/clientes/${item.id}`);
+
+                                router.push({
+                                    pathname: "clientes/[id]",
+                                    params: { id: item.id.toString() },
+                                });
+                            }}
+                        />
                         )}
                     />
                 )}

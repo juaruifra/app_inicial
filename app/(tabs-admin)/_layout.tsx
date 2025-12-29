@@ -64,7 +64,7 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-        name="clientes"
+        name="clientes/index"
         options={{
           title: "Clientes",
           tabBarIcon: ({ color, size }) => (
@@ -90,6 +90,13 @@ export default function AppLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+      name="clientes/[id]"
+      options={{
+        href: null,
+      }}
+    />
     </Tabs>
   );
 }

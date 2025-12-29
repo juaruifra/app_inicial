@@ -430,7 +430,7 @@ const getTallaById = (id: number) =>
   tallasProducto.find((t) => t.id === id)!;
 
 // Calcula detalle de líneas y totales de un pedido
-const buildPedidoConDetalle = (pedido: Pedido): PedidoConDetalle => {
+export const buildPedidoConDetalle = (pedido: Pedido): PedidoConDetalle => {
   const cliente = getClienteById(pedido.clienteId);
   if (!cliente) {
     throw new Error(`Cliente ${pedido.clienteId} no encontrado`);
