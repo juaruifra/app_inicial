@@ -4,13 +4,18 @@ import { ActivityIndicator, Button, Card, Divider, List, Text } from "react-nati
 import { useLocalSearchParams } from "expo-router";
 
 import { Cliente } from "../../data/mockApi";
-import { getClienteById } from "../../services/clientesService";
+import { getClienteById, updateCliente } from "../../services/clientesService";
 import AppHeader from "../layout/AppHeader";
 
 import { PedidoConDetalle } from "../../data/mockApi";
 import { getPedidosByCliente } from "../../services/pedidosService";
-import { formatDate } from "../../utils/date";
 import PedidoItem from "./PedidoItem";
+// Modal reutilizable de crear / editar cliente
+import ClienteFormModal from "./form/ClienteFormModal";
+
+// Tipo del formulario (Cliente sin id)
+import { ClienteFormValues } from "./form/clienteForm.types";
+
 
 
 
@@ -26,6 +31,10 @@ export default function ClienteDetalleScreen() {
 
     const [pedidos, setPedidos] = useState<PedidoConDetalle[]>([]);
     const [isLoadingPedidos, setIsLoadingPedidos] = useState(true);
+
+    // Controla si el modal de edición está abierto
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
 
     const loadPedidos = async () => {
         if (!id) return;
@@ -82,6 +91,15 @@ export default function ClienteDetalleScreen() {
         );
     }
 
+    const editInitialValues: ClienteFormValues = {
+        nombre: cliente.nombre,
+        nifCif: cliente.nifCif ?? "",
+        telefono: cliente.telefono ?? "",
+        email: cliente.email ?? "",
+        notas: cliente.notas ?? "",
+        activo: cliente.activo,
+    };
+
   // Cliente encontrado (de momento, datos simples)
   return (
     <View style={{ flex: 1 }}>
@@ -119,6 +137,7 @@ export default function ClienteDetalleScreen() {
             style={{ marginTop: 16 }}
             onPress={() => {
                 console.log("Editar cliente:", cliente.id);
+                setIsEditModalVisible(true);
             }}
             >
             Editar cliente
@@ -144,11 +163,30 @@ export default function ClienteDetalleScreen() {
                 ))
             )}
 
-
-
-
-
         </View>
+        {/* Modal de edición de cliente */}
+        <ClienteFormModal
+        visible={isEditModalVisible}
+        title="Editar cliente"
+        initialValues={editInitialValues}
+        onSubmit={async (data) => {
+            // De momento solo mostramos los datos editados
+            console.log("Editar cliente:", cliente.id, data);
+
+            // Actualizamos el cliente en el mock
+            const updatedCliente = await updateCliente(cliente.id, data);
+
+            // Actualizamos el estado local para refrescar la pantalla
+            setCliente(updatedCliente);
+
+            // Cerramos el modal
+            setIsEditModalVisible(false);
+        }}
+        onDismiss={() => {
+            // Cerramos el modal sin guardar
+            setIsEditModalVisible(false);
+        }}
+        />
 
     </View>
     

@@ -1,11 +1,74 @@
-import { listClientes } from "../data/mockApi";
+import { clientes, listClientes } from "../data/mockApi";
 import type { Cliente } from "../data/mockApi";
 
+// Simula un pequeño delay como si fuera una API real
+const wait = (ms = 300) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Devuelve la lista de clientes
+ * IMPORTANTE: devolvemos una COPIA del array
+ * para que React detecte cambios y re-renderice
+ */
 export async function getClientes(): Promise<Cliente[]> {
-  return listClientes();
+  await wait();
+
+  const data = await listClientes();
+
+  // Devolvemos una nueva referencia
+  return [...data];
 }
 
-export async function getClienteById(id: number): Promise<Cliente | null>{
+/**
+ * Obtiene un cliente por id
+ * Trabaja sobre la copia devuelta por getClientes
+ */
+export async function getClienteById(
+  id: number
+): Promise<Cliente | null> {
   const clientes = await getClientes();
-  return clientes.find(cliente => cliente.id === id) || null;
+  return clientes.find((cliente) => cliente.id === id) || null;
 }
+
+/**
+ * Crea un cliente nuevo (en memoria)
+ */
+export const createCliente = async (
+  data: Omit<Cliente, "id">
+): Promise<Cliente> => {
+  await wait();
+
+  // Generamos un id simple
+  const newCliente: Cliente = {
+    id: clientes.length + 1,
+    ...data,
+  };
+
+  // Mutamos el mock (esto está bien aquí)
+  clientes.push(newCliente);
+
+  return newCliente;
+};
+
+/**
+ * Actualiza un cliente existente (en memoria)
+ */
+export const updateCliente = async (
+  clienteId: number,
+  data: Omit<Cliente, "id">
+): Promise<Cliente> => {
+  await wait();
+
+  const index = clientes.findIndex((c) => c.id === clienteId);
+  if (index === -1) {
+    throw new Error("Cliente no encontrado");
+  }
+
+  // Sobrescribimos los datos manteniendo el id
+  clientes[index] = {
+    id: clienteId,
+    ...data,
+  };
+
+  return clientes[index];
+};

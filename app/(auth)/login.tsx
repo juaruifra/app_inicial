@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AuthHeader from "../../src/components/AuthHeader";
 import { FormAuthTextInput } from "../../src/components/form/FormAuthTextInput";
 import { FormPasswordInput } from "../../src/components/form/FormPasswordInput";
-import { LoginFormValues, loginSchema } from "../../src/schemas/login.schema";
+import { LoginFormValues, loginSchema } from "../../src/components/auth/login.schema";
 import { useAuth } from "../../src/context/AuthContext";
 import { router } from "expo-router";
 

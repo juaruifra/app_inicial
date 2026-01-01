@@ -3,9 +3,14 @@ import { View, StyleSheet, FlatList  } from "react-native";
 import AppHeader from "../layout/AppHeader";
 import { ActivityIndicator, FAB, Searchbar, Text } from "react-native-paper";
 import { Cliente } from "../../data/mockApi";
-import { getClientes } from "../../services/clientesService";
+import { getClientes,createCliente } from "../../services/clientesService";
 import ClienteItem from "./ClienteItem";
 import { router } from "expo-router";
+// Modal para crear / editar clientes
+import ClienteFormModal from "./form/ClienteFormModal";
+
+// Tipo de datos del formulario
+import { ClienteFormValues } from "./form/clienteForm.types";
 
 export default function ClientesScreen() {
 
@@ -14,19 +19,30 @@ export default function ClientesScreen() {
     const [search, setSearch] = useState("");
     const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
 
+    // Controla si el modal de cliente está abierto o cerrado
+    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+
+    const createInitialValues: ClienteFormValues = {
+    nombre: "",
+    nifCif: "",
+    telefono: "",
+    email: "",
+    notas: "",
+    activo: true,
+    };
+
     const loadClientes = async () => {
-    try {
-        const data = await getClientes();
-        setClientes(data);
-        console.log("Clientes cargados:", data.length);
-    } finally {
-        setIsLoading(false);
-    }
+        try {
+            const data = await getClientes();
+            setClientes(data);
+            console.log("Clientes cargados:", data.length);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => {
-        loadClientes();
-        
+        loadClientes();   
     }, []);
 
     useEffect(() => {
@@ -46,7 +62,8 @@ export default function ClientesScreen() {
         });
 
         setFilteredClientes(filtered);
-        }, [search, clientes]);
+
+    }, [search, clientes]);
 
     if (isLoading) {
         return (
@@ -100,11 +117,40 @@ export default function ClientesScreen() {
 
                 <FAB
                     icon="plus"
-                    onPress={() => console.log("Nuevo cliente")}
+                    onPress={() => 
+                        //console.log("Nuevo cliente")
+                        // Abrimos el modal de creación
+                        setIsCreateModalVisible(true)
+
+                    }
                     style={styles.fab}
                 />
 
             </View>
+
+            {/* Modal de creación de cliente */}
+            <ClienteFormModal
+            visible={isCreateModalVisible}
+            title="Crear cliente"
+            initialValues={createInitialValues}
+            onSubmit={async (data) => {
+                // De momento solo mostramos los datos en consola
+                console.log("Crear cliente:", data);
+
+                // Creamos el cliente en el mock
+                await createCliente(data);
+
+                // Recargamos la lista
+                await loadClientes();
+
+                // Cerramos el modal
+                setIsCreateModalVisible(false);
+            }}
+            onDismiss={() => {
+                // Cerramos el modal sin guardar
+                setIsCreateModalVisible(false);
+            }}
+            />
 
             
         </View>
