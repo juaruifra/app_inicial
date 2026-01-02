@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Cliente } from "../../data/mockApi";
-import { List, Surface } from "react-native-paper";
+import { List, Surface, IconButton } from "react-native-paper";
 import { StyleSheet } from "react-native";
 
 type Props = {
   cliente: Cliente;
   onPress?: () => void;
+  onDelete?: () => void;
 };
 
-export default function ClienteItem({ cliente, onPress }: Props) {
+export default function ClienteItem({ cliente, onPress, onDelete }: Props) {
+
+  // Flag para saber si el click viene del icono de borrar
+  const isDeletingRef = useRef(false);
+
   return (
         <Surface style={styles.container} elevation={1}>
         <List.Item
@@ -34,7 +39,33 @@ export default function ClienteItem({ cliente, onPress }: Props) {
         // }}
         
         // Acción al pulsar la fila
-        onPress={onPress}
+        //onPress={onPress}
+
+        onPress={() => {
+          // Si el click viene del icono de borrar, no navegamos
+          if (isDeletingRef.current) {
+            isDeletingRef.current = false; // reseteamos la bandera
+            return;
+          }
+
+          // Click normal → navegación normal
+          onPress?.();
+        }}
+
+        right={() => (
+          <IconButton
+            icon="trash-can-outline"
+            onPress={() => {
+
+              // Marcamos que este click es de borrado
+              isDeletingRef.current = true;
+
+              // Avisamos al padre 
+              onDelete?.();
+
+            }}
+          />
+        )}
         />
         </Surface>
 

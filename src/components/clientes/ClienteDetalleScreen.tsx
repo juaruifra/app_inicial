@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, Button, Card, Divider, List, Text } from "react-native-paper";
-import { useLocalSearchParams } from "expo-router";
+import { View, StyleSheet,Alert } from "react-native";
+import { ActivityIndicator, Button, Card, Divider, Snackbar, Text } from "react-native-paper";
+import { useLocalSearchParams, router } from "expo-router";
 
 import { Cliente } from "../../data/mockApi";
-import { getClienteById, updateCliente } from "../../services/clientesService";
+import { getClienteById, updateCliente, deleteCliente } from "../../services/clientesService";
 import AppHeader from "../layout/AppHeader";
 
 import { PedidoConDetalle } from "../../data/mockApi";
@@ -16,6 +16,7 @@ import ClienteFormModal from "./form/ClienteFormModal";
 // Tipo del formulario (Cliente sin id)
 import { ClienteFormValues } from "./form/clienteForm.types";
 
+import ConfirmDialog from "../common/ConfirmDialog";
 
 
 
@@ -35,6 +36,29 @@ export default function ClienteDetalleScreen() {
     // Controla si el modal de edición está abierto
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
+    // Estado único del diálogo (confirmación / error)
+    const [dialog, setDialog] = useState<{
+        visible: boolean;
+        title: string;
+        message: string;
+        variant: "confirm" | "error";
+        onConfirm?: () => void;
+    } | null>(null);
+
+    // Abre el diálogo para confirmar el borrado del cliente
+    const confirmDeleteCli = () => {
+
+        if (!cliente) return;
+
+        setDialog({
+            visible: true,
+            title: "Borrar cliente",
+            message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
+            variant: "confirm",
+            // Si el usuario confirma, se ejecutará esta función
+            onConfirm: handleDeleteCliente,
+        });
+    };
 
     const loadPedidos = async () => {
         if (!id) return;
@@ -42,21 +66,13 @@ export default function ClienteDetalleScreen() {
         try {
             const data = await getPedidosByCliente(Number(id));
             setPedidos(data);
-            console.log("Pedidos cargados:", data.length);
+            //console.log("Pedidos cargados:", data.length);
         } finally {
             setIsLoadingPedidos(false);
         }
     };
 
-
-    useEffect(() => {
-        // Protección básica por si el id no existe
-        if (!id || Array.isArray(id)) {
-        setIsLoading(false);
-        return;
-        }
-
-        const loadCliente = async () => {
+    const loadCliente = async () => {
         try {
             const clienteId = Number(id);
             const data = await getClienteById(clienteId);
@@ -64,7 +80,44 @@ export default function ClienteDetalleScreen() {
         } finally {
             setIsLoading(false);
         }
-        };
+    };
+
+    // Maneja el borrado del cliente con confirmación
+    const handleDeleteCliente = async () => {
+
+        if (!cliente) return;
+
+        try{
+            await deleteCliente(cliente.id);
+            router.replace("/clientes");
+        } catch (error) {
+
+            // Si falla, mostramos el error en el MISMO diálogo
+            if (error instanceof Error) {
+                setDialog({
+                    visible: true,
+                    title: "Borrado no permitido",
+                    message: error.message,
+                    variant: "error",
+                });
+            } else {
+                setDialog({
+                    visible: true,
+                    title: "Borrado no permitido",
+                    message: "No se ha podido borrar el cliente",
+                    variant: "error",
+                });
+            }
+        }
+
+    };
+
+    useEffect(() => {
+        // Protección básica por si el id no existe
+        if (!id || Array.isArray(id)) {
+        setIsLoading(false);
+        return;
+        }
 
         loadCliente();
     }, [id]);
@@ -143,6 +196,23 @@ export default function ClienteDetalleScreen() {
             Editar cliente
             </Button>
 
+            <Button
+            // Botón con peso visual (acción peligrosa)
+            mode="contained"
+            // Rojo Material (destructivo)
+            buttonColor="#B00020"
+            textColor="white"
+            style={{ marginTop: 16 }}
+            // Icono claro de borrado
+            icon="trash-can-outline"
+            // Acción: pedir confirmación y borrar
+            onPress={confirmDeleteCli}
+            >
+            Borrar cliente
+            </Button>
+
+
+
             <Text variant="titleMedium" style={{ marginTop: 24, marginBottom: 8 }}>
             Últimos pedidos
             </Text>
@@ -187,6 +257,20 @@ export default function ClienteDetalleScreen() {
             setIsEditModalVisible(false);
         }}
         />
+
+        {/* Diálogo de confirmación / error */}
+        {dialog && (
+            <ConfirmDialog
+                visible={dialog.visible}
+                title={dialog.title}
+                message={dialog.message}
+                variant={dialog.variant}
+                confirmText={dialog.variant === "confirm" ? "Borrar" : "Aceptar"}
+                cancelText="Cancelar"
+                onConfirm={dialog.onConfirm}
+                onCancel={() => setDialog(null)}
+            />
+    )}
 
     </View>
     

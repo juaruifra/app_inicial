@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList  } from "react-native";
+import { View, StyleSheet, FlatList} from "react-native";
 import AppHeader from "../layout/AppHeader";
 import { ActivityIndicator, FAB, Searchbar, Text } from "react-native-paper";
 import { Cliente } from "../../data/mockApi";
-import { getClientes,createCliente } from "../../services/clientesService";
+import { getClientes,createCliente, deleteCliente } from "../../services/clientesService";
 import ClienteItem from "./ClienteItem";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 // Modal para crear / editar clientes
 import ClienteFormModal from "./form/ClienteFormModal";
 
 // Tipo de datos del formulario
 import { ClienteFormValues } from "./form/clienteForm.types";
+
+import ConfirmDialog from "../common/ConfirmDialog";
 
 export default function ClientesScreen() {
 
@@ -31,6 +33,58 @@ export default function ClientesScreen() {
     activo: true,
     };
 
+    // Estado único del diálogo (confirmación / error)
+    const [dialog, setDialog] = useState<{
+        visible: boolean;
+        title: string;
+        message: string;
+        variant: "confirm" | "error";
+        onConfirm?: () => void;
+    } | null>(null);
+
+    // Ejecuta el borrado real y maneja errores controlados
+    const doDeleteCliente = async (clienteId: number) => {
+
+        try {
+            // Borrado del cliente
+            await deleteCliente(clienteId);
+
+            // Cerramos el modal
+            setDialog(null);
+
+            // Recargamos la lista (tu función ya existe)
+            await loadClientes();
+
+        } catch (error) {
+
+            // Mostramos el error en el mismo modal (modo error)
+            const message =
+            error instanceof Error
+                ? error.message
+                : "No se ha podido borrar el cliente";
+
+            setDialog({
+                visible: true,
+                title: "Borrado no permitido",
+                message,
+                variant: "error",
+            });
+        }
+    };
+
+
+    // Abre el diálogo para confirmar borrado
+    const askDeleteCliente = (cliente: Cliente) => {
+        setDialog({
+            visible: true,
+            title: "Borrar cliente",
+            message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
+            variant: "confirm",
+            onConfirm: () => doDeleteCliente(cliente.id),
+        });
+    };
+
+
     const loadClientes = async () => {
         try {
             const data = await getClientes();
@@ -41,9 +95,17 @@ export default function ClientesScreen() {
         }
     };
 
-    useEffect(() => {
-        loadClientes();   
-    }, []);
+    // useEffect(() => {
+    //     loadClientes();   
+    // }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            // Cada vez que la pantalla gana el foco,
+            // recargamos la lista de clientes
+            loadClientes();
+        }, [])
+    );
 
     useEffect(() => {
         const text = search.toLowerCase().trim();
@@ -109,6 +171,10 @@ export default function ClientesScreen() {
                                     params: { id: item.id.toString() },
                                 });
                             }}
+                            onDelete={() => {
+                                // Abrimos confirmación de borrado
+                                askDeleteCliente(item);
+                            }}
                         />
                         )}
                     />
@@ -151,6 +217,21 @@ export default function ClientesScreen() {
                 setIsCreateModalVisible(false);
             }}
             />
+
+            {/* Modal reutilizable */}
+            {dialog && (
+            <ConfirmDialog
+                visible={dialog.visible}
+                title={dialog.title}
+                message={dialog.message}
+                variant={dialog.variant}
+                confirmText={dialog.variant === "confirm" ? "Borrar" : "Aceptar"}
+                cancelText="Cancelar"
+                onConfirm={dialog.onConfirm}
+                onCancel={() => setDialog(null)}
+            />
+            )}
+
 
             
         </View>
