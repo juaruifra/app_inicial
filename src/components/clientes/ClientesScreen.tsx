@@ -12,7 +12,8 @@ import ClienteFormModal from "./form/ClienteFormModal";
 // Tipo de datos del formulario
 import { ClienteFormValues } from "./form/clienteForm.types";
 
-import ConfirmDialog from "../common/ConfirmDialog";
+import { useConfirmAction } from "../../hooks/useConfirmAction";
+
 
 export default function ClientesScreen() {
 
@@ -24,6 +25,8 @@ export default function ClientesScreen() {
     // Controla si el modal de cliente está abierto o cerrado
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
+    const { confirm, ConfirmDialogUI } = useConfirmAction();
+
     const createInitialValues: ClienteFormValues = {
     nombre: "",
     nifCif: "",
@@ -32,58 +35,6 @@ export default function ClientesScreen() {
     notas: "",
     activo: true,
     };
-
-    // Estado único del diálogo (confirmación / error)
-    const [dialog, setDialog] = useState<{
-        visible: boolean;
-        title: string;
-        message: string;
-        variant: "confirm" | "error";
-        onConfirm?: () => void;
-    } | null>(null);
-
-    // Ejecuta el borrado real y maneja errores controlados
-    const doDeleteCliente = async (clienteId: number) => {
-
-        try {
-            // Borrado del cliente
-            await deleteCliente(clienteId);
-
-            // Cerramos el modal
-            setDialog(null);
-
-            // Recargamos la lista (tu función ya existe)
-            await loadClientes();
-
-        } catch (error) {
-
-            // Mostramos el error en el mismo modal (modo error)
-            const message =
-            error instanceof Error
-                ? error.message
-                : "No se ha podido borrar el cliente";
-
-            setDialog({
-                visible: true,
-                title: "Borrado no permitido",
-                message,
-                variant: "error",
-            });
-        }
-    };
-
-
-    // Abre el diálogo para confirmar borrado
-    const askDeleteCliente = (cliente: Cliente) => {
-        setDialog({
-            visible: true,
-            title: "Borrar cliente",
-            message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
-            variant: "confirm",
-            onConfirm: () => doDeleteCliente(cliente.id),
-        });
-    };
-
 
     const loadClientes = async () => {
         try {
@@ -95,10 +46,24 @@ export default function ClientesScreen() {
         }
     };
 
+    const handleDeleteCliente = (cliente: Cliente) => {
+
+        confirm({
+            title: "Borrar cliente",
+            message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
+            action: () => deleteCliente(cliente.id),
+            onSuccess: () => {
+                loadClientes();
+            },
+        });
+
+    };
+
     // useEffect(() => {
     //     loadClientes();   
     // }, []);
 
+    // Utilizamos useFocusEffect para recargar al volver a la pantalla
     useFocusEffect(
         React.useCallback(() => {
             // Cada vez que la pantalla gana el foco,
@@ -108,6 +73,7 @@ export default function ClientesScreen() {
     );
 
     useEffect(() => {
+
         const text = search.toLowerCase().trim();
 
         if (!text) {
@@ -140,8 +106,6 @@ export default function ClientesScreen() {
             {/* Barra superior reutilizable */}
             <AppHeader title="Clientes" />
 
-            
-
             {/* Contenido principal de clientes */}
             <View style={styles.content}>
 
@@ -171,10 +135,7 @@ export default function ClientesScreen() {
                                     params: { id: item.id.toString() },
                                 });
                             }}
-                            onDelete={() => {
-                                // Abrimos confirmación de borrado
-                                askDeleteCliente(item);
-                            }}
+                            onDelete={() => handleDeleteCliente(item)}
                         />
                         )}
                     />
@@ -184,7 +145,7 @@ export default function ClientesScreen() {
                 <FAB
                     icon="plus"
                     onPress={() => 
-                        //console.log("Nuevo cliente")
+
                         // Abrimos el modal de creación
                         setIsCreateModalVisible(true)
 
@@ -219,19 +180,7 @@ export default function ClientesScreen() {
             />
 
             {/* Modal reutilizable */}
-            {dialog && (
-            <ConfirmDialog
-                visible={dialog.visible}
-                title={dialog.title}
-                message={dialog.message}
-                variant={dialog.variant}
-                confirmText={dialog.variant === "confirm" ? "Borrar" : "Aceptar"}
-                cancelText="Cancelar"
-                onConfirm={dialog.onConfirm}
-                onCancel={() => setDialog(null)}
-            />
-            )}
-
+            <ConfirmDialogUI />
 
             
         </View>

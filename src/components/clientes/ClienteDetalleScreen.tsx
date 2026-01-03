@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet,Alert } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { ActivityIndicator, Button, Card, Divider, Snackbar, Text } from "react-native-paper";
 import { useLocalSearchParams, router } from "expo-router";
 
@@ -16,13 +16,10 @@ import ClienteFormModal from "./form/ClienteFormModal";
 // Tipo del formulario (Cliente sin id)
 import { ClienteFormValues } from "./form/clienteForm.types";
 
-import ConfirmDialog from "../common/ConfirmDialog";
-
-
+import { useConfirmAction } from "../../hooks/useConfirmAction";
 
 export default function ClienteDetalleScreen() {
 
-    console.log("ClienteDetalleScreen render");
     // Leemos el id de la ruta
     const { id } = useLocalSearchParams();
 
@@ -36,31 +33,12 @@ export default function ClienteDetalleScreen() {
     // Controla si el modal de edición está abierto
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
-    // Estado único del diálogo (confirmación / error)
-    const [dialog, setDialog] = useState<{
-        visible: boolean;
-        title: string;
-        message: string;
-        variant: "confirm" | "error";
-        onConfirm?: () => void;
-    } | null>(null);
+    // Todo lo necesario del hook de confirmación / error
+    const { confirm, ConfirmDialogUI } = useConfirmAction();
 
-    // Abre el diálogo para confirmar el borrado del cliente
-    const confirmDeleteCli = () => {
-
-        if (!cliente) return;
-
-        setDialog({
-            visible: true,
-            title: "Borrar cliente",
-            message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
-            variant: "confirm",
-            // Si el usuario confirma, se ejecutará esta función
-            onConfirm: handleDeleteCliente,
-        });
-    };
-
+    // Carga los pedidos del cliente
     const loadPedidos = async () => {
+
         if (!id) return;
 
         try {
@@ -72,6 +50,7 @@ export default function ClienteDetalleScreen() {
         }
     };
 
+    // Carga el cliente por id
     const loadCliente = async () => {
         try {
             const clienteId = Number(id);
@@ -83,33 +62,16 @@ export default function ClienteDetalleScreen() {
     };
 
     // Maneja el borrado del cliente con confirmación
-    const handleDeleteCliente = async () => {
-
-        if (!cliente) return;
-
-        try{
-            await deleteCliente(cliente.id);
-            router.replace("/clientes");
-        } catch (error) {
-
-            // Si falla, mostramos el error en el MISMO diálogo
-            if (error instanceof Error) {
-                setDialog({
-                    visible: true,
-                    title: "Borrado no permitido",
-                    message: error.message,
-                    variant: "error",
-                });
-            } else {
-                setDialog({
-                    visible: true,
-                    title: "Borrado no permitido",
-                    message: "No se ha podido borrar el cliente",
-                    variant: "error",
-                });
-            }
-        }
-
+    const handleDeleteCliente = (cliente: Cliente) => {
+        confirm({
+            title: "Borrar cliente",
+            message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
+            action: () => deleteCliente(cliente.id),
+            onSuccess: () => {
+                // Si todo va bien te envia a la lista de clientes
+                router.replace("/clientes");
+            },
+        });
     };
 
     useEffect(() => {
@@ -144,6 +106,7 @@ export default function ClienteDetalleScreen() {
         );
     }
 
+    // Valores iniciales para el formulario de edición
     const editInitialValues: ClienteFormValues = {
         nombre: cliente.nombre,
         nifCif: cliente.nifCif ?? "",
@@ -153,11 +116,12 @@ export default function ClienteDetalleScreen() {
         activo: cliente.activo,
     };
 
-  // Cliente encontrado (de momento, datos simples)
+  // Cliente encontrado
   return (
     <View style={{ flex: 1 }}>
         <AppHeader title="Detalle Cliente" />
-        <View style={styles.container}>
+        <ScrollView style={styles.container}
+        contentContainerStyle={styles.scrollContent}>
             <Text variant="headlineSmall" style={styles.title}>
                 {cliente.nombre}
             </Text>
@@ -166,14 +130,28 @@ export default function ClienteDetalleScreen() {
                 <Card.Content>
                 <Text variant="labelMedium">Email</Text>
                 <Text style={styles.value}>
-                    {cliente.email ?? "Sin email"}
+                    {cliente.email ?? ""}
+                </Text>
+
+                <Divider style={styles.divider} />
+
+                <Text variant="labelMedium">DNI</Text>
+                <Text style={styles.value}>
+                    {cliente.nifCif ?? ""}
                 </Text>
 
                 <Divider style={styles.divider} />
 
                 <Text variant="labelMedium">Teléfono</Text>
                 <Text style={styles.value}>
-                    {cliente.telefono ?? "Sin teléfono"}
+                    {cliente.telefono ?? ""}
+                </Text>
+
+                <Divider style={styles.divider} />
+
+                <Text variant="labelMedium">Notas</Text>
+                <Text style={styles.value}>
+                    {cliente.notas ?? ""}
                 </Text>
 
                 <Divider style={styles.divider} />
@@ -206,7 +184,7 @@ export default function ClienteDetalleScreen() {
             // Icono claro de borrado
             icon="trash-can-outline"
             // Acción: pedir confirmación y borrar
-            onPress={confirmDeleteCli}
+            onPress={() => handleDeleteCliente(cliente)}
             >
             Borrar cliente
             </Button>
@@ -233,7 +211,7 @@ export default function ClienteDetalleScreen() {
                 ))
             )}
 
-        </View>
+        </ScrollView>
         {/* Modal de edición de cliente */}
         <ClienteFormModal
         visible={isEditModalVisible}
@@ -259,18 +237,7 @@ export default function ClienteDetalleScreen() {
         />
 
         {/* Diálogo de confirmación / error */}
-        {dialog && (
-            <ConfirmDialog
-                visible={dialog.visible}
-                title={dialog.title}
-                message={dialog.message}
-                variant={dialog.variant}
-                confirmText={dialog.variant === "confirm" ? "Borrar" : "Aceptar"}
-                cancelText="Cancelar"
-                onConfirm={dialog.onConfirm}
-                onCancel={() => setDialog(null)}
-            />
-    )}
+        <ConfirmDialogUI />
 
     </View>
     
@@ -279,7 +246,11 @@ export default function ClienteDetalleScreen() {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         padding: 16,
+    },
+    scrollContent: {
+        paddingBottom: 32, // espacio extra para que el último pedido no quede pegado
     },
     center: {
         flex: 1,
