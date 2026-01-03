@@ -4,6 +4,7 @@ import { Chip, List, Surface, Text } from "react-native-paper";
 import { PedidoConDetalle } from "../../data/mockApi";
 import { formatDate } from "../../utils/date";
 import { getEstadoPedidoUI } from "../../utils/pedidos";
+import { formatNumber } from "../../utils/number";
 
 
 type Props = {
@@ -30,7 +31,7 @@ export default function PedidoItem({ pedido, onPress }: Props) {
             >
                 {estadoUI.label}
             </Chip>
-            <Text style={styles.amount}>{pedido.totalImporte.toFixed(2)} €</Text>
+            <Text style={styles.amount}>{formatNumber(pedido.totalImporte)} €</Text>
             </View>
         )}
         onPress={onPress}

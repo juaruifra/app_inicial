@@ -1,20 +1,9 @@
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { View,Text } from "react-native";
 import { useAuth } from "../../src/context/AuthContext";
+import InventarioScreen from "../../src/components/inventario/InventarioScreen";
 
 export default function InventarioTab() {
-  // Esta pantalla es solo un puente para que exista la pestaña
-  // Redirigimos a la ruta protegida real de admin
-  // useEffect(() => {
-  //   router.replace("/admin/inventario");
-  // }, []);
-
-  // return (
-  //   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //     <ActivityIndicator />
-  //   </View>
-  // );
 
   const { user } = useAuth();
 
@@ -30,10 +19,6 @@ export default function InventarioTab() {
     return null;
   }
 
-  return (
-    <View>
-      <Text>Inventario</Text>
-    </View>
-  );
+  return <InventarioScreen />;
 
 }

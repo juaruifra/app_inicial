@@ -1,9 +1,5 @@
-import { View, Text } from "react-native";
+import PedidosScreen from "../../src/components/pedidos/PedidosScreen";
 
 export default function Pedidos() {
-  return (
-    <View>
-      <Text>Pedidos</Text>
-    </View>
-  );
+  return <PedidosScreen />;
 }
