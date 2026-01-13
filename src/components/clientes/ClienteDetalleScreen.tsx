@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { ActivityIndicator, Button, Card, Divider, Text, SegmentedButtons  } from "react-native-paper";
+import { ActivityIndicator, Button, Card, Divider, Text, SegmentedButtons,List  } from "react-native-paper";
 import { useLocalSearchParams, router } from "expo-router";
 
 import { Cliente } from "../../data/mockApi";
@@ -150,33 +150,68 @@ export default function ClienteDetalleScreen() {
                     </Text>
 
                     <Card style={styles.card}>
-                    <Card.Content>
-                        <Text variant="labelMedium">Email</Text>
-                        <Text style={styles.value}>{cliente.email ?? ""}</Text>
+                        <Card.Content>
 
-                        <Divider style={styles.divider} />
+                            <List.Item
+                            title="Email"
+                            description={cliente.email || "—"}
+                            left={(props) => (
+                                <List.Icon {...props} icon="email-outline" />
+                            )}
+                            />
 
-                        <Text variant="labelMedium">DNI</Text>
-                        <Text style={styles.value}>{cliente.nifCif ?? ""}</Text>
+                            <Divider />
 
-                        <Divider style={styles.divider} />
+                            <List.Item
+                            title="DNI / CIF"
+                            description={cliente.nifCif || "—"}
+                            left={(props) => (
+                                <List.Icon {...props} icon="card-account-details-outline" />
+                            )}
+                            />
 
-                        <Text variant="labelMedium">Teléfono</Text>
-                        <Text style={styles.value}>{cliente.telefono ?? ""}</Text>
+                            <Divider />
 
-                        <Divider style={styles.divider} />
+                            <List.Item
+                            title="Teléfono"
+                            description={cliente.telefono || "—"}
+                            left={(props) => (
+                                <List.Icon {...props} icon="phone-outline" />
+                            )}
+                            />
 
-                        <Text variant="labelMedium">Notas</Text>
-                        <Text style={styles.value}>{cliente.notas ?? ""}</Text>
+                            <Divider />
 
-                        <Divider style={styles.divider} />
+                            <List.Item
+                            title="Notas"
+                            description={cliente.notas || "—"}
+                            descriptionNumberOfLines={3}
+                            left={(props) => (
+                                <List.Icon {...props} icon="note-text-outline" />
+                            )}
+                            />
 
-                        <Text variant="labelMedium">Estado</Text>
-                        <Text style={styles.value}>
-                        {cliente.activo ? "Activo" : "Inactivo"}
-                        </Text>
-                    </Card.Content>
+                            <Divider />
+
+                            <List.Item
+                            title="Estado"
+                            description={cliente.activo ? "Activo" : "Inactivo"}
+                            left={(props) => (
+                                <List.Icon
+                                {...props}
+                                icon={
+                                    cliente.activo
+                                    ? "check-circle-outline"
+                                    : "close-circle-outline"
+                                }
+                                color={cliente.activo ? "#2E7D32" : "#C62828"}
+                                />
+                            )}
+                            />
+
+                        </Card.Content>
                     </Card>
+
 
                     <Button
                     mode="outlined"
@@ -271,12 +306,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: {
-    marginBottom: 16,
-        },
+        marginBottom: 16,
+    },
 
-        card: {
+    card: {
         borderRadius: 12,
-        },
+    },
 
     value: {
         marginTop: 4,
