@@ -33,14 +33,6 @@ export default function ClienteItem({ cliente, onPress, onDelete }: Props) {
             />
         )}
 
-        // Acción al pulsar la fila
-        // onPress={() => {
-        //     console.log("Cliente pulsado:", cliente.id);
-        // }}
-        
-        // Acción al pulsar la fila
-        //onPress={onPress}
-
         onPress={() => {
           // Si el click viene del icono de borrar, no navegamos
           if (isDeletingRef.current) {

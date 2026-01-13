@@ -126,6 +126,13 @@ export interface PedidoConDetalle extends Pedido {
   totalImporte: number;
 }
 
+// Credenciales SOLO para autenticación (mock)
+// En un backend real esto estaría en BD y con hash
+export type AuthCredential = {
+  userId: number;
+  password: string;
+};
+
 // 2. DATOS FICTICIOS
 // -----------------------------------------------------
 
@@ -148,6 +155,18 @@ export const usuarios: User[] = [
     roleId: 1,
     name: 'Pepe',
     email: 'pepe@sprintcar.com',
+  },
+];
+
+// Usuarios válidos para login (modo demo)
+export const credentials: AuthCredential[] = [
+  {
+    userId: 1,
+    password: "admin123",
+  },
+  {
+    userId: 2,
+    password: "pepe123",
   },
 ];
 

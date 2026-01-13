@@ -6,30 +6,30 @@ import {
 } from "../storage/authStorage";
 
 import { usuarios } from "../data/mockApi";
-import type { User } from "../data/mockApi";
+import { User,credentials } from "../data/mockApi";
 
 // Función auxiliar para simular tiempo de espera (latencia de red)
 const delay = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-// Credenciales SOLO para autenticación (mock)
-// En un backend real esto estaría en BD y con hash
-type AuthCredential = {
-  userId: number;
-  password: string;
-};
+// // Credenciales SOLO para autenticación (mock)
+// // En un backend real esto estaría en BD y con hash
+// type AuthCredential = {
+//   userId: number;
+//   password: string;
+// };
 
-// Usuarios válidos para login (modo demo)
-const credentials: AuthCredential[] = [
-  {
-    userId: 1,
-    password: "admin123",
-  },
-  {
-    userId: 2,
-    password: "pepe123",
-  },
-];
+// // Usuarios válidos para login (modo demo)
+// const credentials: AuthCredential[] = [
+//   {
+//     userId: 1,
+//     password: "admin123",
+//   },
+//   {
+//     userId: 2,
+//     password: "pepe123",
+//   },
+// ];
 
 export async function loginWithEmailAndPassword(
   email: string,

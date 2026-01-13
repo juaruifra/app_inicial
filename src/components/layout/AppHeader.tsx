@@ -2,12 +2,20 @@ import React from "react";
 import { View, Image, StyleSheet, Pressable } from "react-native";
 import { Appbar, Menu, Divider, Text, Avatar, useTheme } from "react-native-paper";
 import { useAuth } from "../../context/AuthContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+
+// type AppHeaderProps = {
+//     title? : string
+// };
 
 type AppHeaderProps = {
-    title? : string
+    options?: any;
+    back?: { title?: string; href?: string };
 };
-    
-export default function AppHeader({ title = "" }: AppHeaderProps) {
+
+//export default function AppHeader({ title = "" }: AppHeaderProps) {
+export default function AppHeader({ options, back }: AppHeaderProps) {
   // Obtenemos el usuario y la función de logout desde el contexto
   const { user, logout } = useAuth();
 
@@ -29,6 +37,19 @@ export default function AppHeader({ title = "" }: AppHeaderProps) {
 
   return (
     <Appbar.Header>
+
+      {back ? (
+            <Pressable onPress={() => router.back()} style={styles.backButton}>
+                <MaterialCommunityIcons
+                    name="arrow-left"
+                    size={24}
+                    color={theme.colors.primary}
+                />
+            </Pressable>
+        ) : (
+            <View style={styles.backButtonPlaceholder} />
+        )}
+
       {/* Logo de la aplicación a la izquierda */}
       <Image
         source={require("../../../assets/img/logo.png")}
@@ -37,7 +58,8 @@ export default function AppHeader({ title = "" }: AppHeaderProps) {
       />
 
       {/* Espaciador con el título para empujar el avatar a la derecha */}
-      <Appbar.Content title={title} titleStyle={{
+      <Appbar.Content title={options?.title ?? back?.title ?? ""} 
+          titleStyle={{
           fontSize: 18,
             fontWeight: "bold",
             color: theme.colors.primary
@@ -124,7 +146,7 @@ const styles = StyleSheet.create({
     logo: {
         height: 95,
         width: 120,
-        marginLeft: 8,
+        marginLeft: 0,
     },
     userInfo: {
         paddingHorizontal: 16,
@@ -136,5 +158,17 @@ const styles = StyleSheet.create({
     userEmail: {
         fontSize: 12,
         opacity: 0.7,
-    }
+    },
+    backButton: {
+        marginRight: 12,
+        width: 32,
+        height: 32,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    backButtonPlaceholder: {
+        marginRight: 12,
+        width: 32,
+        height: 32,
+    },
 });

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList} from "react-native";
-import AppHeader from "../layout/AppHeader";
 import { ActivityIndicator, FAB, Searchbar, Text } from "react-native-paper";
 import { Cliente } from "../../data/mockApi";
 import { getClientes,createCliente, deleteCliente } from "../../services/clientesService";
@@ -104,7 +103,7 @@ export default function ClientesScreen() {
     return (
         <View style={styles.container}>
             {/* Barra superior reutilizable */}
-            <AppHeader title="Clientes" />
+            {/* <AppHeader title="Clientes" /> */}
 
             {/* Contenido principal de clientes */}
             <View style={styles.content}>

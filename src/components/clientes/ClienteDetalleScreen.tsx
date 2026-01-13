@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { ActivityIndicator, Button, Card, Divider, Snackbar, Text } from "react-native-paper";
+import { ActivityIndicator, Button, Card, Divider, Text, SegmentedButtons  } from "react-native-paper";
 import { useLocalSearchParams, router } from "expo-router";
 
 import { Cliente } from "../../data/mockApi";
 import { getClienteById, updateCliente, deleteCliente } from "../../services/clientesService";
-import AppHeader from "../layout/AppHeader";
 
 import { PedidoConDetalle } from "../../data/mockApi";
 import { getPedidosByCliente } from "../../services/pedidosService";
@@ -35,6 +34,9 @@ export default function ClienteDetalleScreen() {
 
     // Todo lo necesario del hook de confirmación / error
     const { confirm, ConfirmDialogUI } = useConfirmAction();
+
+    // Controla qué sección se está mostrando
+    const [activeTab, setActiveTab] = useState<"info" | "pedidos">("info")
 
     // Carga los pedidos del cliente
     const loadPedidos = async () => {
@@ -119,89 +121,97 @@ export default function ClienteDetalleScreen() {
   // Cliente encontrado
   return (
     <View style={{ flex: 1 }}>
-        <AppHeader title="Detalle Cliente" />
+        {/* <AppHeader title="Detalle Cliente" /> */}
+
+        {/* Botones de cambio de vista */}
+        <View style={styles.tabsWrapper}>
+            <SegmentedButtons
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as "info" | "pedidos")}
+            buttons={[
+                {
+                value: "info",
+                label: "Datos del Cliente",
+                },
+                {
+                value: "pedidos",
+                label: "Pedidos",
+                },
+            ]}
+            />
+        </View>
+
         <ScrollView style={styles.container}
         contentContainerStyle={styles.scrollContent}>
-            <Text variant="headlineSmall" style={styles.title}>
-                {cliente.nombre}
-            </Text>
+            {activeTab === "info" && (
+                <>
+                    <Text variant="headlineSmall" style={styles.title}>
+                    {cliente.nombre}
+                    </Text>
 
-            <Card style={styles.card}>
-                <Card.Content>
-                <Text variant="labelMedium">Email</Text>
-                <Text style={styles.value}>
-                    {cliente.email ?? ""}
+                    <Card style={styles.card}>
+                    <Card.Content>
+                        <Text variant="labelMedium">Email</Text>
+                        <Text style={styles.value}>{cliente.email ?? ""}</Text>
+
+                        <Divider style={styles.divider} />
+
+                        <Text variant="labelMedium">DNI</Text>
+                        <Text style={styles.value}>{cliente.nifCif ?? ""}</Text>
+
+                        <Divider style={styles.divider} />
+
+                        <Text variant="labelMedium">Teléfono</Text>
+                        <Text style={styles.value}>{cliente.telefono ?? ""}</Text>
+
+                        <Divider style={styles.divider} />
+
+                        <Text variant="labelMedium">Notas</Text>
+                        <Text style={styles.value}>{cliente.notas ?? ""}</Text>
+
+                        <Divider style={styles.divider} />
+
+                        <Text variant="labelMedium">Estado</Text>
+                        <Text style={styles.value}>
+                        {cliente.activo ? "Activo" : "Inactivo"}
+                        </Text>
+                    </Card.Content>
+                    </Card>
+
+                    <Button
+                    mode="outlined"
+                    style={{ marginTop: 16 }}
+                    onPress={() => setIsEditModalVisible(true)}
+                    >
+                    Editar cliente
+                    </Button>
+
+                    <Button
+                    mode="contained"
+                    buttonColor="#B00020"
+                    textColor="white"
+                    style={{ marginTop: 16 }}
+                    icon="trash-can-outline"
+                    onPress={() => handleDeleteCliente(cliente)}
+                    >
+                    Borrar cliente
+                    </Button>
+                </>
+            )}
+
+            {activeTab === "pedidos" && (
+            <>
+                <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+                Pedidos
                 </Text>
 
-                <Divider style={styles.divider} />
-
-                <Text variant="labelMedium">DNI</Text>
-                <Text style={styles.value}>
-                    {cliente.nifCif ?? ""}
+                {isLoadingPedidos ? (
+                <ActivityIndicator style={{ marginTop: 8 }} />
+                ) : pedidos.length === 0 ? (
+                <Text style={{ marginTop: 8 }}>
+                    Este cliente no tiene pedidos
                 </Text>
-
-                <Divider style={styles.divider} />
-
-                <Text variant="labelMedium">Teléfono</Text>
-                <Text style={styles.value}>
-                    {cliente.telefono ?? ""}
-                </Text>
-
-                <Divider style={styles.divider} />
-
-                <Text variant="labelMedium">Notas</Text>
-                <Text style={styles.value}>
-                    {cliente.notas ?? ""}
-                </Text>
-
-                <Divider style={styles.divider} />
-
-                <Text variant="labelMedium">Estado</Text>
-                <Text style={styles.value}>
-                    {cliente.activo ? "Activo" : "Inactivo"}
-                </Text>
-                </Card.Content>
-            </Card>
-
-            <Button
-            mode="outlined"
-            style={{ marginTop: 16 }}
-            onPress={() => {
-                console.log("Editar cliente:", cliente.id);
-                setIsEditModalVisible(true);
-            }}
-            >
-            Editar cliente
-            </Button>
-
-            <Button
-            // Botón con peso visual (acción peligrosa)
-            mode="contained"
-            // Rojo Material (destructivo)
-            buttonColor="#B00020"
-            textColor="white"
-            style={{ marginTop: 16 }}
-            // Icono claro de borrado
-            icon="trash-can-outline"
-            // Acción: pedir confirmación y borrar
-            onPress={() => handleDeleteCliente(cliente)}
-            >
-            Borrar cliente
-            </Button>
-
-
-
-            <Text variant="titleMedium" style={{ marginTop: 24, marginBottom: 8 }}>
-            Últimos pedidos
-            </Text>
-
-            {isLoadingPedidos ? (
-            <ActivityIndicator style={{ marginTop: 8 }} />
-            ) : pedidos.length === 0 ? (
-            <Text style={{ marginTop: 8 }}>
-                Este cliente no tiene pedidos recientes
-            </Text>
-            ) : (
+                ) : (
                 pedidos.map((p) => (
                     <PedidoItem
                     key={p.id}
@@ -209,7 +219,10 @@ export default function ClienteDetalleScreen() {
                     onPress={() => console.log("Pedido pulsado:", p.id)}
                     />
                 ))
+                )}
+            </>
             )}
+
 
         </ScrollView>
         {/* Modal de edición de cliente */}
@@ -266,11 +279,17 @@ const styles = StyleSheet.create({
         },
 
     value: {
-    marginTop: 4,
-    marginBottom: 12,
+        marginTop: 4,
+        marginBottom: 12,
     },
 
     divider: {
-    marginVertical: 8,
+        marginVertical: 8,
+    },
+    tabsWrapper: {
+        paddingHorizontal: 16,
+        paddingTop: 8,
+        paddingBottom: 8,
+        backgroundColor: "white",
     },
 });
