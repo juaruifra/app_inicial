@@ -1,7 +1,13 @@
 import React, { useRef } from "react";
 import { Cliente } from "../../data/mockApi";
-import { List, Surface, IconButton } from "react-native-paper";
-import { StyleSheet } from "react-native";
+import {
+  List,
+  Surface,
+  IconButton,
+  Chip,
+  useTheme,
+} from "react-native-paper";
+import { StyleSheet, View } from "react-native";
 
 type Props = {
   cliente: Cliente;
@@ -10,60 +16,86 @@ type Props = {
 };
 
 export default function ClienteItem({ cliente, onPress, onDelete }: Props) {
-
   // Flag para saber si el click viene del icono de borrar
   const isDeletingRef = useRef(false);
 
+  const theme = useTheme();
+  const isActivo = cliente.activo;
+
+  // Colores claros pero reconocibles
+  const statusColor = isActivo
+    ? theme.colors.primary // verde / primario
+    : theme.colors.error; // rojo
+
   return (
-        <Surface style={styles.container} elevation={1}>
-        <List.Item
+    <Surface style={styles.container} elevation={1}>
+      <List.Item
         // Texto principal (nombre del cliente)
         title={cliente.nombre}
 
         // Texto secundario (email o teléfono)
-        description={(cliente.email ?? "Sin email") + " - " + (cliente.telefono ?? "Sin teléfono")}
-
+        description={
+          (cliente.email ?? "Sin email") +
+          " - " +
+          (cliente.telefono ?? "Sin teléfono")
+        }
         descriptionNumberOfLines={1}
-        
-        // Icono a la izquierda
+
+        // Icono a la izquierda (NO se cambia)
         left={(props) => (
-            <List.Icon
+          <List.Icon
             {...props}
-            icon="domain" // accont-group seria otra opción
-            />
+            icon="domain"
+          />
         )}
 
+        // Click principal → navegación
         onPress={() => {
           // Si el click viene del icono de borrar, no navegamos
           if (isDeletingRef.current) {
-            isDeletingRef.current = false; // reseteamos la bandera
+            isDeletingRef.current = false;
             return;
           }
 
-          // Click normal → navegación normal
           onPress?.();
         }}
 
+        // Parte derecha: estado + borrar
         right={() => (
-          <IconButton
-            icon="trash-can-outline"
-            onPress={() => {
+          <View style={styles.right}>
+            {/* Estado Activo / Inactivo */}
+            <Chip
+              compact
+              mode="outlined"
+              style={[
+                styles.statusChip,
+                { borderColor: statusColor },
+              ]}
+              textStyle={{
+                color: statusColor,
+                fontWeight: "700",
+              }}
+            >
+              {isActivo ? "Activo" : "Inactivo"}
+            </Chip>
 
-              // Marcamos que este click es de borrado
-              isDeletingRef.current = true;
+            {/* Botón borrar (MISMA lógica que antes) */}
+            <IconButton
+              icon="trash-can-outline"
+              iconColor="#C62828"
+              onPress={() => {
+                // Marcamos que este click es de borrado
+                isDeletingRef.current = true;
 
-              // Avisamos al padre 
-              onDelete?.();
-
-            }}
-          />
+                // Avisamos al padre
+                onDelete?.();
+              }}
+            />
+          </View>
         )}
-        />
-        </Surface>
-
+      />
+    </Surface>
   );
-
-  
 }
 
 const styles = StyleSheet.create({
@@ -71,5 +103,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 12,
     overflow: "hidden",
+  },
+  right: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  statusChip: {
+    backgroundColor: "transparent",
+    borderWidth: 1,
   },
 });

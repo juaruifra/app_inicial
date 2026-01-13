@@ -20,7 +20,7 @@ export default function PedidoItem({ pedido, onPress }: Props) {
     <Surface style={styles.container} elevation={1}>
       <List.Item
         title={pedido.codigo}
-        description={`${formatDate(pedido.fechaInicio)} → ${formatDate(pedido.fechaFin)}`}
+        description={`${formatDate(pedido.fechaInicio)} - ${formatDate(pedido.fechaFin)}`}
         left={(props) => <List.Icon {...props} icon="clipboard-text-outline" />}
         right={() => (
             <View style={styles.right}>
