@@ -97,6 +97,7 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
         {/* Opciones futuras */}
         <Menu.Item
           onPress={() => {
+            router.push("/preferencias");
             closeMenu();
           }}
           title="Preferencias"

@@ -267,7 +267,7 @@ export default function ClienteDetalleScreen() {
         initialValues={editInitialValues}
         onSubmit={async (data) => {
             // De momento solo mostramos los datos editados
-            console.log("Editar cliente:", cliente.id, data);
+            //console.log("Editar cliente:", cliente.id, data);
 
             // Actualizamos el cliente en el mock
             const updatedCliente = await updateCliente(cliente.id, data);
