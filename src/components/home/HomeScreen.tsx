@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   ActivityIndicator,
@@ -10,6 +10,7 @@ import {
 } from "react-native-paper";
 import AppHeader from "../layout/AppHeader";
 import { useUserStore } from "../../store/userStore";
+// import { usePreferencesStore } from "../../store/preferencesStore";
 
 export default function HomeScreen() {
   const theme = useTheme();
@@ -25,6 +26,10 @@ export default function HomeScreen() {
   }
 
   const isAdmin = user.role === "ADMIN";
+
+  // useEffect(() => {
+  //   usePreferencesStore.getState().setTheme("light");
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -87,7 +92,10 @@ export default function HomeScreen() {
       </View>
     </View>
   );
+
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
