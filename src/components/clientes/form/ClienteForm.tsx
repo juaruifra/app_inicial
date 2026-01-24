@@ -32,23 +32,6 @@ export default function ClienteForm({
 
   return (
     <View>
-      {/* Nombre */}
-      {/* <Controller
-        control={control}
-        name="nombre"
-        render={({ field }) => (
-          <TextInput
-            label="Nombre"
-            value={field.value}
-            onChangeText={field.onChange}
-            error={!!errors.nombre}
-            style={styles.input}
-          />
-        )}
-      />
-      {errors.nombre && (
-        <Text style={styles.error}>{errors.nombre.message}</Text>
-      )} */}
 
       <FormAuthTextInput
               control={control}
@@ -59,20 +42,6 @@ export default function ClienteForm({
               left={<TextInput.Icon icon="account" />} //email
             />
 
-      {/* NIF / CIF */}
-      {/* <Controller
-        control={control}
-        name="nifCif"
-        render={({ field }) => (
-          <TextInput
-            label="NIF / CIF"
-            value={field.value}
-            onChangeText={field.onChange}
-            style={styles.input}
-          />
-        )}
-      /> */}
-
       <FormAuthTextInput
               control={control}
               name="nifCif"
@@ -80,25 +49,6 @@ export default function ClienteForm({
               autoCapitalize="none"
               left={<TextInput.Icon icon="card-account-details-outline" />} 
             />
-
-      {/* Email */}
-      {/* <Controller
-        control={control}
-        name="email"
-        render={({ field }) => (
-          <TextInput
-            label="Email"
-            value={field.value}
-            onChangeText={field.onChange}
-            keyboardType="email-address"
-            error={!!errors.email}
-            style={styles.input}
-          />
-        )}
-      />
-      {errors.email && (
-        <Text style={styles.error}>{errors.email.message}</Text>
-      )} */}
 
       <FormAuthTextInput
               control={control}
@@ -109,21 +59,6 @@ export default function ClienteForm({
               left={<TextInput.Icon icon="email" />}
             />
 
-      {/* Teléfono */}
-      {/* <Controller
-        control={control}
-        name="telefono"
-        render={({ field }) => (
-          <TextInput
-            label="Teléfono"
-            value={field.value}
-            onChangeText={field.onChange}
-            keyboardType="phone-pad"
-            style={styles.input}
-          />
-        )}
-      /> */}
-
       <FormAuthTextInput
               control={control}
               name="telefono"
@@ -132,22 +67,6 @@ export default function ClienteForm({
               autoCapitalize="none"
               left={<TextInput.Icon icon="phone" />}
             />
-
-      {/* Notas */}
-      {/* <Controller
-        control={control}
-        name="notas"
-        render={({ field }) => (
-          <TextInput
-            label="Notas"
-            value={field.value}
-            onChangeText={field.onChange}
-            multiline
-            numberOfLines={3}
-            style={styles.input}
-          />
-        )}
-      /> */}
 
       <FormAuthTextInput
         control={control}

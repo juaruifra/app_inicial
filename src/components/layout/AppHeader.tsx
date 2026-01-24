@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Image, StyleSheet, Pressable } from "react-native";
-import { Appbar, Menu, Divider, Text, Avatar, useTheme } from "react-native-paper";
+import { Appbar, Menu, Divider, Text, Avatar, useTheme, ActivityIndicator } from "react-native-paper";
 import { useAuth } from "../../context/AuthContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useUserStore } from "../../store/userStore";
 
 // type AppHeaderProps = {
 //     title? : string
@@ -17,7 +18,9 @@ type AppHeaderProps = {
 //export default function AppHeader({ title = "" }: AppHeaderProps) {
 export default function AppHeader({ options, back }: AppHeaderProps) {
   // Obtenemos el usuario y la función de logout desde el contexto
-  const { user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
+
+  const user = useUserStore((state) => state.user);
 
   // Estado para controlar si el menú está abierto o cerrado
   const [menuVisible, setMenuVisible] = React.useState(false);
@@ -31,9 +34,24 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
   const theme = useTheme();
 
   // Si por algún motivo no hay usuario, no mostramos la barra
-  if (!user) {
+  if (!isAuthenticated) {
     return null;
   }
+
+   // Si hay sesión pero el usuario aún no está cargado
+    if (!user) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator />
+        </View>
+      );
+    }
 
   return (
     <Appbar.Header>
@@ -105,9 +123,10 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
 
         <Menu.Item
           onPress={() => {
+            router.push("/perfil");
             closeMenu();
           }}
-          title="Editar perfil"
+          title="Perfil"
         />
 
         <Menu.Item

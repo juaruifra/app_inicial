@@ -12,25 +12,7 @@ import { User,credentials } from "../data/mockApi";
 const delay = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-// // Credenciales SOLO para autenticación (mock)
-// // En un backend real esto estaría en BD y con hash
-// type AuthCredential = {
-//   userId: number;
-//   password: string;
-// };
-
-// // Usuarios válidos para login (modo demo)
-// const credentials: AuthCredential[] = [
-//   {
-//     userId: 1,
-//     password: "admin123",
-//   },
-//   {
-//     userId: 2,
-//     password: "pepe123",
-//   },
-// ];
-
+// Login con email y contraseña
 export async function loginWithEmailAndPassword(
   email: string,
   password: string
@@ -86,3 +68,5 @@ export async function getStoredUser(): Promise<User | null> {
 export async function logoutUser(): Promise<void> {
   await clearAuthStorage();
 }
+
+export { User };

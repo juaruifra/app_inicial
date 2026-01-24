@@ -1,11 +1,12 @@
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { useAuth } from "../../src/context/AuthContext";
 import InventarioScreen from "../../src/components/inventario/InventarioScreen";
+import { useUserStore } from "../../src/store/userStore";
 
 export default function InventarioTab() {
 
-  const { user } = useAuth();
+  // const { user } = useAuth();
+  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
     // Si no es administrador, lo sacamos de esta pantalla

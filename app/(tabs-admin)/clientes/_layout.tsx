@@ -4,7 +4,7 @@ import { useAuth } from "../../../src/context/AuthContext";
 import AppHeader from "../../../src/components/layout/AppHeader";
 
 export default function ProtectedLayout() {
-  const { user, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -14,7 +14,7 @@ export default function ProtectedLayout() {
     );
   }
 
-  if (!user) {
+  if (!isAuthenticated) {
     return <Redirect href="/login" />;
   }
 

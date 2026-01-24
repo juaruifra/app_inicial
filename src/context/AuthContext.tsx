@@ -10,8 +10,10 @@ import {
   getStoredUser,
   loginWithEmailAndPassword,
   logoutUser,
-  User,
 } from "../services/authService";
+
+import { useUserStore } from "../store/userStore";
+import { roles } from "../data/mockApi";
 
 /*
   DEFINIMOS qué información va a compartir el contexto
@@ -20,12 +22,20 @@ import {
   cualquier componente que use el contexto
   sabrá que estas propiedades existen
 */
+// type AuthContextType = {
+//   user: User | null; // Usuario actual o null si no hay login
+//   isLoading: boolean; // Si estamos comprobando sesión guardada
+//   login: (email: string, password: string) => Promise<void>;
+//   logout: () => Promise<void>;
+// };
+
 type AuthContextType = {
-  user: User | null; // Usuario actual o null si no hay login
-  isLoading: boolean; // Si estamos comprobando sesión guardada
+  isAuthenticated: boolean; // ¿hay sesión activa?
+  isLoading: boolean;       // ¿estamos restaurando sesión?
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 };
+
 
 /*
   CREAMOS el contexto en sí
@@ -50,36 +60,74 @@ export const AuthProvider: React.FC<{
 }> = ({ children }) => {
 
   // Estado donde guardamos el usuario logueado
-  const [user, setUser] = useState<User | null>(null);
+  //const [user, setUser] = useState<User | null>(null);
 
   // Estado para saber si estamos cargando datos del storage
   const [isLoading, setIsLoading] = useState(true);
+
+  const setUser = useUserStore((state) => state.setUser);
+  const clearUser = useUserStore((state) => state.clearUser);
+  const user = useUserStore((state) => state.user);
+
 
   /*
     Al arrancar la app:
     - intentamos leer el usuario guardado (si lo hay)
     - esto simula "recordar la sesión"
   */
+  // useEffect(() => {
+  //   const loadUserFromStorage = async () => {
+  //     try {
+  //       const storedUser = await getStoredUser();
+  //       if (storedUser) {
+  //         setUser(storedUser);
+  //       }
+  //     } catch (error) {
+  //       console.warn(
+  //         "Error al cargar el usuario guardado",
+  //         error
+  //       );
+  //     } finally {
+  //       // Ya hemos terminado de comprobar el storage
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   loadUserFromStorage();
+  // }, []);
+
   useEffect(() => {
-    const loadUserFromStorage = async () => {
+    const restoreSession = async () => {
+      console.log("Restaurando sesión...");
       try {
         const storedUser = await getStoredUser();
+        console.log("Usuario en storage:", storedUser);
+
         if (storedUser) {
-          setUser(storedUser);
+          // Buscamos el rol legible a partir del roleId
+          const role = roles.find(
+            (r) => r.id === storedUser.roleId
+          )?.name;
+
+          if (role) {
+            setUser({
+              ...storedUser,
+              role,
+            });
+          }
         }
       } catch (error) {
-        console.warn(
-          "Error al cargar el usuario guardado",
-          error
-        );
+        console.warn("Error restaurando sesión", error);
       } finally {
-        // Ya hemos terminado de comprobar el storage
         setIsLoading(false);
       }
     };
 
-    loadUserFromStorage();
+    restoreSession();
   }, []);
+
+
+
 
   /*
     Función login
@@ -87,34 +135,76 @@ export const AuthProvider: React.FC<{
     - si las credenciales son correctas,
       guardamos el usuario en el estado
   */
+  // const login = async (email: string, password: string) => {
+  //   const loggedUser = await loginWithEmailAndPassword(
+  //     email,
+  //     password
+  //   );
+
+  //   setUser(loggedUser);
+  // };
+
   const login = async (email: string, password: string) => {
+
+    console.log("AuthContext.login llamado", email);
+
     const loggedUser = await loginWithEmailAndPassword(
       email,
       password
     );
 
-    setUser(loggedUser);
+    console.log("Usuario devuelto por authService", loggedUser);
+
+    const role = roles.find(
+      (r) => r.id === loggedUser.roleId
+    )?.name;
+
+    if (!role) {
+      throw new Error("Rol de usuario no válido");
+    }
+
+    console.log("Seteando usuario en Zustand");
+
+    setUser({
+      ...loggedUser,
+      role,
+    });
   };
+
 
   /*
     Función logout
     - borra el usuario guardado
     - limpia el estado global
   */
+  // const logout = async () => {
+  //   await logoutUser();
+  //   setUser(null);
+  // };
+
   const logout = async () => {
     await logoutUser();
-    setUser(null);
+    clearUser();
   };
+
 
   /*
     Valor que se compartirá con TODA la app
   */
+  // const value: AuthContextType = {
+  //   user,
+  //   isLoading,
+  //   login,
+  //   logout,
+  // };
+
   const value: AuthContextType = {
-    user,
+    isAuthenticated: !!user,
     isLoading,
     login,
     logout,
   };
+
 
   return (
     <AuthContext.Provider value={value}>

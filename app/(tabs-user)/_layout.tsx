@@ -2,9 +2,13 @@ import { Tabs, Redirect } from "expo-router";
 import { View, ActivityIndicator } from "react-native";
 import { useAuth } from "../../src/context/AuthContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useUserStore } from "../../src/store/userStore";
 
 export default function AppLayout() {
-  const { user, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Recuperamos el usuario del store de zustand
+  const user = useUserStore((state) => state.user);
 
   // Mientras cargamos el usuario desde storage
   if (isLoading) {
@@ -22,11 +26,26 @@ export default function AppLayout() {
   }
 
   // Si no hay usuario, vamos al login
-  if (!user) {
+  if (!isAuthenticated) {
     return <Redirect href="/login" />;
   }
 
-  // Si el usuario es ADMIN, no puede estar en tabs-user
+  // Si hay sesión pero el usuario aún no está cargado
+  if (!user) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  //Si el usuario es ADMIN, no puede estar en tabs-user
   if (user.roleId === 2) {
     return <Redirect href="/(tabs-admin)/home" />;
   }
@@ -78,11 +97,19 @@ export default function AppLayout() {
       />
 
       <Tabs.Screen
-      name="clientes/[id]"
-      options={{
-        href: null,
-      }}
-    />
+        name="clientes/[id]"
+        options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="preferencias"
+        options={{
+          href: null,
+        }}
+      />
+
     </Tabs>
   );
 }

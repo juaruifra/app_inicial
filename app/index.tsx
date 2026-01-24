@@ -1,10 +1,14 @@
 import { Redirect } from "expo-router";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { useAuth } from "../src/context/AuthContext";
+import { useUserStore } from "../src/store/userStore";
 
 export default function IndexFile() {
+  
   // Obtenemos el usuario y el estado de carga del contexto
-  const { user, isLoading } = useAuth();
+  const {isLoading } = useAuth();
+
+  const user = useUserStore((state) => state.user);
 
   // Mientras comprobamos el storage, mostramos un loader
   if (isLoading) {
