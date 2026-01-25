@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Chip, List, Surface, Text } from "react-native-paper";
+import { Chip, List, Surface, Text, useTheme } from "react-native-paper";
 import { PedidoConDetalle } from "../../data/mockApi";
 import { formatDate } from "../../utils/date";
 import { getEstadoPedidoUI } from "../../utils/pedidos";
@@ -14,7 +14,8 @@ type Props = {
 
 export default function PedidoItem({ pedido, onPress }: Props) {
 
-  const estadoUI = getEstadoPedidoUI(pedido.estado);
+  const theme = useTheme();
+  const estadoUI = getEstadoPedidoUI(pedido.estado,theme);
 
   return (
     <Surface style={styles.container} elevation={1}>
@@ -25,11 +26,16 @@ export default function PedidoItem({ pedido, onPress }: Props) {
         right={() => (
             <View style={styles.right}>
             <Chip
-                compact
-                style={[styles.estadoChip, { borderColor: estadoUI.color }]}
-                textStyle={{ color: estadoUI.color, fontWeight: "700" }}
+              compact
+              style={{
+                backgroundColor: estadoUI.backgroundColor,
+              }}
+              textStyle={{
+                color: estadoUI.textColor,
+                fontWeight: "600",
+              }}
             >
-                {estadoUI.label}
+              {estadoUI.label}
             </Chip>
             <Text style={styles.amount}>{formatNumber(pedido.totalImporte)} €</Text>
             </View>

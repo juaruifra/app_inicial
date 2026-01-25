@@ -1,48 +1,57 @@
+import { MD3Theme } from "react-native-paper";
 import { EstadoPedido } from "../data/mockApi";
 
 type EstadoPedidoUI = {
   label: string;
-  color: string;
+  backgroundColor: string;
+  textColor: string;
 };
 
 export function getEstadoPedidoUI(
-  estado: EstadoPedido
+  estado: EstadoPedido,
+  theme: MD3Theme
 ): EstadoPedidoUI {
   switch (estado) {
     case "FINALIZADO":
       return {
         label: "FINALIZADO",
-        color: "#2e7d32", // verde
+        backgroundColor: theme.colors.primaryContainer,
+        textColor: theme.colors.onPrimaryContainer,
       };
 
     case "PREPARADO":
       return {
         label: "PREPARADO",
-        color: "#ef6c00", // naranja
+        backgroundColor: theme.colors.tertiaryContainer,
+        textColor: theme.colors.onTertiaryContainer,
       };
 
     case "ENTREGADO":
       return {
         label: "ENTREGADO",
-        color: "#1565c0", // azul
+        backgroundColor: theme.colors.secondaryContainer,
+        textColor: theme.colors.onSecondaryContainer,
       };
 
     case "PENDIENTE_REVISION":
       return {
         label: "PENDIENTE",
-        color: "#f9a825", // amarillo
+        backgroundColor: theme.colors.surfaceVariant,
+        textColor: theme.colors.onSurfaceVariant,
       };
 
     case "DEVUELTO":
       return {
         label: "DEVUELTO",
-        color: "#6a1b9a", // morado
+        backgroundColor: theme.colors.errorContainer,
+        textColor: theme.colors.onErrorContainer,
       };
 
     default:
       return {
         label: estado,
-        color: "#616161", // gris
+        backgroundColor: theme.colors.surfaceVariant,
+        textColor: theme.colors.onSurfaceVariant,
       };
   }
 }
