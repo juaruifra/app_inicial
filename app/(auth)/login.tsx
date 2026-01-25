@@ -46,7 +46,6 @@ const Login: React.FC = () => {
     si TODOS los campos son válidos
   */
   const onSubmit = async (data: LoginFormValues) => {
-    //console.log("Datos válidos:", data);
 
     setAuthError(null);
     setIsSubmitting(true);

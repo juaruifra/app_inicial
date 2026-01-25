@@ -48,7 +48,6 @@ export default function ClienteDetalleScreen() {
         try {
             const data = await getPedidosByCliente(Number(id));
             setPedidos(data);
-            //console.log("Pedidos cargados:", data.length);
         } finally {
             setIsLoadingPedidos(false);
         }
@@ -274,7 +273,6 @@ export default function ClienteDetalleScreen() {
         initialValues={editInitialValues}
         onSubmit={async (data) => {
             // De momento solo mostramos los datos editados
-            //console.log("Editar cliente:", cliente.id, data);
 
             // Actualizamos el cliente en el mock
             const updatedCliente = await updateCliente(cliente.id, data);

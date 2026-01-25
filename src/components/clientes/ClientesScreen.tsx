@@ -41,7 +41,7 @@ export default function ClientesScreen() {
         try {
             const data = await getClientes();
             setClientes(data);
-            console.log("Clientes cargados:", data.length);
+            
         } finally {
             setIsLoading(false);
         }
@@ -162,8 +162,6 @@ export default function ClientesScreen() {
             title="Crear cliente"
             initialValues={createInitialValues}
             onSubmit={async (data) => {
-                // De momento solo mostramos los datos en consola
-                console.log("Crear cliente:", data);
 
                 // Creamos el cliente en el mock
                 await createCliente(data);

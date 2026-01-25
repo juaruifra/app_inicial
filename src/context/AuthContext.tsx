@@ -98,10 +98,10 @@ export const AuthProvider: React.FC<{
 
   useEffect(() => {
     const restoreSession = async () => {
-      console.log("Restaurando sesión...");
+      
       try {
         const storedUser = await getStoredUser();
-        console.log("Usuario en storage:", storedUser);
+        
 
         if (storedUser) {
           // Buscamos el rol legible a partir del roleId
@@ -146,14 +146,10 @@ export const AuthProvider: React.FC<{
 
   const login = async (email: string, password: string) => {
 
-    console.log("AuthContext.login llamado", email);
-
     const loggedUser = await loginWithEmailAndPassword(
       email,
       password
     );
-
-    console.log("Usuario devuelto por authService", loggedUser);
 
     const role = roles.find(
       (r) => r.id === loggedUser.roleId
@@ -162,8 +158,6 @@ export const AuthProvider: React.FC<{
     if (!role) {
       throw new Error("Rol de usuario no válido");
     }
-
-    console.log("Seteando usuario en Zustand");
 
     setUser({
       ...loggedUser,
