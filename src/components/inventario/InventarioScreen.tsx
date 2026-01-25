@@ -1,12 +1,14 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import AppHeader from "../layout/AppHeader";
-import { Text } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 
 export default function PedidosScreen() {
 
+  const theme = useTheme();
+
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
         {/* Barra superior reutilizable */}
         <AppHeader />
 

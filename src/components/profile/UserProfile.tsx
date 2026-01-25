@@ -13,6 +13,7 @@ import {
 } from "./profileForm.schema";
 
 export default function UserProfile() {
+  
   const theme = useTheme();
 
   // Usuario global desde Zustand
@@ -78,7 +79,7 @@ export default function UserProfile() {
           <FormAuthTextInput
             control={control}
             name="name"
-            label="Nombre visible"
+            label="Nombre"
             autoCapitalize="words"
             left={<TextInput.Icon icon="account" />}
           />

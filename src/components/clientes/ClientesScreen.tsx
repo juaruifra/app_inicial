@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList} from "react-native";
-import { ActivityIndicator, FAB, Searchbar, Text } from "react-native-paper";
+import { ActivityIndicator, FAB, Searchbar, Text, useTheme } from "react-native-paper";
 import { Cliente } from "../../data/mockApi";
 import { getClientes,createCliente, deleteCliente } from "../../services/clientesService";
 import ClienteItem from "./ClienteItem";
@@ -25,6 +25,8 @@ export default function ClientesScreen() {
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
     const { confirm, ConfirmDialogUI } = useConfirmAction();
+
+    const theme = useTheme();
 
     const createInitialValues: ClienteFormValues = {
     nombre: "",
@@ -101,7 +103,7 @@ export default function ClientesScreen() {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
             {/* Barra superior reutilizable */}
             {/* <AppHeader title="Clientes" /> */}
 

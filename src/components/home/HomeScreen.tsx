@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import {
   ActivityIndicator,
@@ -6,11 +6,12 @@ import {
   Card,
   Avatar,
   Chip,
+  List,
   useTheme,
 } from "react-native-paper";
+import { router } from "expo-router";
 import AppHeader from "../layout/AppHeader";
 import { useUserStore } from "../../store/userStore";
-// import { usePreferencesStore } from "../../store/preferencesStore";
 
 export default function HomeScreen() {
   const theme = useTheme();
@@ -27,16 +28,16 @@ export default function HomeScreen() {
 
   const isAdmin = user.role === "ADMIN";
 
-  // useEffect(() => {
-  //   usePreferencesStore.getState().setTheme("light");
-  // }, []);
-
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.background },
+      ]}
+    >
       {/* Barra superior */}
       <AppHeader />
 
-      {/* Contenido */}
       <View style={styles.content}>
         {/* Card de bienvenida */}
         <Card style={styles.card}>
@@ -44,9 +45,7 @@ export default function HomeScreen() {
             <Avatar.Icon
               size={64}
               icon="account"
-              style={{
-                backgroundColor: theme.colors.primary,
-              }}
+              style={{ backgroundColor: theme.colors.primary }}
             />
 
             <View style={styles.userInfo}>
@@ -89,13 +88,42 @@ export default function HomeScreen() {
           Desde aquí puedes acceder a los distintos módulos de la aplicación y
           gestionar tu trabajo diario.
         </Text>
+
+        {/* Acciones rápidas */}
+        <Card style={styles.actionsCard}>
+          <List.Item
+            title="Perfil"
+            description="Ver y editar tus datos"
+            left={(props) => (
+              <List.Icon {...props} icon="account-circle-outline" />
+            )}
+            onPress={() => router.push("/perfil")}
+          />
+
+          <List.Item
+            title="Preferencias"
+            description="Tema e idioma de la aplicación"
+            left={(props) => (
+              <List.Icon {...props} icon="cog-outline" />
+            )}
+            onPress={() => router.push("/preferencias")}
+          />
+
+          
+          <List.Item
+            title="Clientes"
+            description="Gestión de clientes"
+            left={(props) => (
+              <List.Icon {...props} icon="account-group-outline" />
+            )}
+            onPress={() => router.push("/clientes")}
+          />
+          
+        </Card>
       </View>
     </View>
   );
-
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -128,5 +156,9 @@ const styles = StyleSheet.create({
   subtitle: {
     opacity: 0.8,
     lineHeight: 20,
+    marginBottom: 16,
+  },
+  actionsCard: {
+    borderRadius: 16,
   },
 });

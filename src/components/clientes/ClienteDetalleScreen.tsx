@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { ActivityIndicator, Button, Card, Divider, Text, SegmentedButtons,List  } from "react-native-paper";
+import { ActivityIndicator, Button, Card, Divider, Text, SegmentedButtons,List, useTheme  } from "react-native-paper";
 import { useLocalSearchParams, router } from "expo-router";
 
 import { Cliente } from "../../data/mockApi";
@@ -18,6 +18,8 @@ import { ClienteFormValues } from "./form/clienteForm.types";
 import { useConfirmAction } from "../../hooks/useConfirmAction";
 
 export default function ClienteDetalleScreen() {
+
+    const theme = useTheme();
 
     // Leemos el id de la ruta
     const { id } = useLocalSearchParams();
@@ -120,11 +122,16 @@ export default function ClienteDetalleScreen() {
 
   // Cliente encontrado
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[{ flex: 1 }, { backgroundColor: theme.colors.background }]}>
         {/* <AppHeader title="Detalle Cliente" /> */}
 
         {/* Botones de cambio de vista */}
-        <View style={styles.tabsWrapper}>
+        <View
+        style={[
+            styles.tabsWrapper,
+            { backgroundColor: theme.colors.elevation.level2 },
+        ]}
+        >
             <SegmentedButtons
             value={activeTab}
             onValueChange={(value) => setActiveTab(value as "info" | "pedidos")}
@@ -325,6 +332,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingTop: 8,
         paddingBottom: 8,
-        backgroundColor: "white",
+        //backgroundColor: "white",
     },
 });

@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { Modal, Portal, Text } from "react-native-paper";
+import { Modal, Portal, Text, useTheme } from "react-native-paper";
 
 import ClienteForm from "./ClienteForm";
 import { ClienteFormValues } from "./clienteForm.types";
@@ -31,13 +31,15 @@ export default function ClienteFormModal({
   onSubmit,
   onDismiss,
 }: Props) {
+
+  const theme = useTheme();
   return (
     // Portal asegura que el modal se renderiza por encima de toda la app
     <Portal>
       <Modal
         visible={visible}
         onDismiss={onDismiss}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={[styles.container, {backgroundColor: theme.colors.surface}]}
       >
         {/* Scroll para que el contenido no se corte en pantallas pequeñas */}
         <ScrollView
@@ -65,7 +67,7 @@ export default function ClienteFormModal({
 const styles = StyleSheet.create({
   // Contenedor principal del modal (la "caja blanca")
   container: {
-    backgroundColor: "white",
+    //backgroundColor: "white",
     marginHorizontal: 16,
     borderRadius: 12,
 

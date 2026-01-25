@@ -1,150 +1,152 @@
 import React from "react";
 import { View, Image, StyleSheet, Pressable } from "react-native";
-import { Appbar, Menu, Divider, Text, Avatar, useTheme, ActivityIndicator } from "react-native-paper";
+import {
+  Appbar,
+  Menu,
+  Divider,
+  Text,
+  Avatar,
+  useTheme,
+  ActivityIndicator,
+} from "react-native-paper";
 import { useAuth } from "../../context/AuthContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useUserStore } from "../../store/userStore";
 
-// type AppHeaderProps = {
-//     title? : string
-// };
-
 type AppHeaderProps = {
-    options?: any;
-    back?: { title?: string; href?: string };
+  options?: any;
+  back?: { title?: string; href?: string };
 };
 
-//export default function AppHeader({ title = "" }: AppHeaderProps) {
 export default function AppHeader({ options, back }: AppHeaderProps) {
-  // Obtenemos el usuario y la función de logout desde el contexto
   const { isAuthenticated, logout } = useAuth();
-
   const user = useUserStore((state) => state.user);
 
-  // Estado para controlar si el menú está abierto o cerrado
   const [menuVisible, setMenuVisible] = React.useState(false);
-
-  // Abrimos el menú
-  const openMenu = () => setMenuVisible(true);
-
-  // Cerramos el menú
-  const closeMenu = () => setMenuVisible(false);
 
   const theme = useTheme();
 
-  // Si por algún motivo no hay usuario, no mostramos la barra
   if (!isAuthenticated) {
     return null;
   }
 
-   // Si hay sesión pero el usuario aún no está cargado
-    if (!user) {
-      return (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ActivityIndicator />
-        </View>
-      );
-    }
+  if (!user) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
-    <Appbar.Header>
-
+    <Appbar.Header
+      style={{
+        backgroundColor: theme.colors.elevation.level2,
+      }}
+    >
+      {/* Botón volver */}
       {back ? (
-            <Pressable onPress={() => router.back()} style={styles.backButton}>
-                <MaterialCommunityIcons
-                    name="arrow-left"
-                    size={24}
-                    color={theme.colors.primary}
-                />
-            </Pressable>
-        ) : (
-            <View style={styles.backButtonPlaceholder} />
-        )}
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+          <MaterialCommunityIcons
+            name="arrow-left"
+            size={24}
+            color={theme.colors.onSurface}
+          />
+        </Pressable>
+      ) : (
+        <View style={styles.backButtonPlaceholder} />
+      )}
 
-      {/* Logo de la aplicación a la izquierda */}
+      {/* Logo */}
       <Image
         source={require("../../../assets/img/logo.png")}
         style={styles.logo}
         resizeMode="contain"
       />
 
-      {/* Espaciador con el título para empujar el avatar a la derecha */}
-      <Appbar.Content title={options?.title ?? back?.title ?? ""} 
-          titleStyle={{
+      {/* Título */}
+      <Appbar.Content
+        title={options?.title ?? back?.title ?? ""}
+        titleStyle={{
           fontSize: 18,
-            fontWeight: "bold",
-            color: theme.colors.primary
-        }} />
+          fontWeight: "bold",
+          color: theme.colors.onSurface,
+        }}
+      />
 
-      {/* Menú de usuario */}
+      {/* Menú usuario */}
       <Menu
         visible={menuVisible}
-        onDismiss={closeMenu}
+        onDismiss={() => setMenuVisible(false)}
         anchor={
-            <Pressable onPress={openMenu}>
-                <View style={styles.avatarWrapper}>
-                    <Avatar.Icon
-                    size={36}
-                    icon="account"
-                    color="white"
-                    style={styles.avatar}
-                    />
-                </View>
-            </Pressable>
+          <Pressable onPress={() => setMenuVisible(true)}>
+            <View style={styles.avatarWrapper}>
+              <Avatar.Text
+                size={36}
+                label={user.name
+                  .split(" ")
+                  .map((w) => w[0])
+                  .join("")
+                  .toUpperCase()}
+                style={{
+                  backgroundColor: theme.colors.primary,
+                }}
+                color={theme.colors.onPrimary}
+              />
+            </View>
+          </Pressable>
         }
->
-        {/* Información del usuario */}
+        contentStyle={{
+          backgroundColor: theme.colors.elevation.level3,
+        }}
+      >
+        {/* Info usuario */}
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>
+          <Text style={{ fontWeight: "bold", color: theme.colors.onSurface }}>
             {user.name}
           </Text>
-          <Text style={styles.userEmail}>
+          <Text
+            style={{
+              fontSize: 12,
+              color: theme.colors.onSurfaceVariant,
+            }}
+          >
             {user.email}
           </Text>
         </View>
 
         <Divider />
 
-        {/* Opciones futuras */}
         <Menu.Item
+          title="Preferencias"
           onPress={() => {
             router.push("/preferencias");
-            closeMenu();
+            setMenuVisible(false);
           }}
-          title="Preferencias"
         />
 
         <Menu.Item
+          title="Perfil"
           onPress={() => {
             router.push("/perfil");
-            closeMenu();
+            setMenuVisible(false);
           }}
-          title="Perfil"
         />
 
         <Menu.Item
-          onPress={() => {
-            closeMenu();
-          }}
           title="Cambiar contraseña"
+          onPress={() => setMenuVisible(false)}
         />
 
         <Divider />
 
-        {/* Cerrar sesión */}
         <Menu.Item
+          title="Cerrar sesión"
           onPress={async () => {
-            closeMenu();
+            setMenuVisible(false);
             await logout();
           }}
-          title="Cerrar sesión"
         />
       </Menu>
     </Appbar.Header>
@@ -152,43 +154,37 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
 }
 
 const styles = StyleSheet.create({
-
-    avatarWrapper: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        overflow: "hidden",
-        marginRight: 15
-    },
-    avatar: {
-        backgroundColor: "#6750A4",
-    },
-    logo: {
-        height: 95,
-        width: 120,
-        marginLeft: 0,
-    },
-    userInfo: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-    },
-    userName: {
-        fontWeight: "bold",
-    },
-    userEmail: {
-        fontSize: 12,
-        opacity: 0.7,
-    },
-    backButton: {
-        marginRight: 12,
-        width: 32,
-        height: 32,
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    backButtonPlaceholder: {
-        marginRight: 12,
-        width: 32,
-        height: 32,
-    },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logo: {
+    height: 95,
+    width: 120,
+  },
+  userInfo: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  backButton: {
+    marginRight: 12,
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backButtonPlaceholder: {
+    marginRight: 12,
+    width: 32,
+    height: 32,
+  },
 });

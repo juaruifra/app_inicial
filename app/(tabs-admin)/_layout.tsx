@@ -3,58 +3,43 @@ import { View, ActivityIndicator } from "react-native";
 import { useAuth } from "../../src/context/AuthContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useUserStore } from "../../src/store/userStore";
+import { useTheme } from "react-native-paper";
 
 export default function AppLayout() {
   const { isAuthenticated, isLoading } = useAuth();
-
   const user = useUserStore((state) => state.user);
+  const theme = useTheme();
 
-  // Mientras cargamos el usuario desde storage
   if (isLoading) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator />
       </View>
     );
   }
 
-  // Si no hay usuario, vamos al login
-  if (!isAuthenticated) {
-    return <Redirect href="/login" />;
-  }
+  if (!isAuthenticated) return <Redirect href="/login" />;
+  if (!user) return null;
+  if (user.roleId !== 2) return <Redirect href="/(tabs-user)/home" />;
 
-  // Si hay sesión pero el usuario aún no está cargado
-  if (!user) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ActivityIndicator />
-      </View>
-    );
-  }
-
-  //Si NO es administrador, no puede estar en tabs-admin
-  if (user.roleId !== 2) {
-    return <Redirect href="/(tabs-user)/home" />;
-  }
-
-  // Tabs SOLO para administrador
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#6750A4",
+
+        // Colores de icono/texto activos
+        tabBarActiveTintColor: theme.colors.primary,
+
+        // Ajuste solo para modo oscuro: inactivo más apagado
+        tabBarInactiveTintColor: theme.dark
+          ? theme.colors.outline // más gris en dark
+          : theme.colors.onSurfaceVariant, // lo que ya usabas en light
+
+        // Fondo de la tab bar
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.outlineVariant,
+        },
       }}
     >
       <Tabs.Screen
@@ -100,35 +85,15 @@ export default function AppLayout() {
         options={{
           title: "Inventario",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="warehouse"
-              color={color}
-              size={size}
-            />
+            <MaterialCommunityIcons name="warehouse" color={color} size={size} />
           ),
         }}
       />
 
-      <Tabs.Screen
-        name="clientes/[id]"
-        options={{
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="preferencias"
-        options={{
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="perfil"
-        options={{
-          href: null,
-        }}
-      />
+      {/* Rutas ocultas de tabs */}
+      <Tabs.Screen name="clientes/[id]" options={{ href: null }} />
+      <Tabs.Screen name="preferencias" options={{ href: null }} />
+      <Tabs.Screen name="perfil" options={{ href: null }} />
     </Tabs>
   );
 }

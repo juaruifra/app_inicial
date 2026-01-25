@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -20,6 +20,8 @@ const Login: React.FC = () => {
 
   // Estado para desactivar el botón mientras se valida
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const theme = useTheme();
 
   /*
     useForm crea y controla el formulario
@@ -44,7 +46,7 @@ const Login: React.FC = () => {
     si TODOS los campos son válidos
   */
   const onSubmit = async (data: LoginFormValues) => {
-    console.log("Datos válidos:", data);
+    //console.log("Datos válidos:", data);
 
     setAuthError(null);
     setIsSubmitting(true);
@@ -69,7 +71,7 @@ const Login: React.FC = () => {
 
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <AuthHeader
         title="Bienvenido"
         subtitle="Introduce tus credenciales para continuar"

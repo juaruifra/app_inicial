@@ -34,7 +34,7 @@ export default function PreferenciasScreen() {
   const languageLabel = language === "es" ? "Español" : "Inglés";
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[{ flex: 1 }, { backgroundColor: theme.colors.background }]}>
       {/* Barra superior reutilizable */}
       <AppHeader />
 
