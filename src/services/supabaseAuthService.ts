@@ -1,0 +1,104 @@
+import { supabase } from "../lib/supabaseClient";
+// Usamos el mismo tipo User que ya utilizas en el resto de la app
+import type { User } from "../data/mockApi";
+
+// Fila tal y como viene de Supabase (nombres snake_case)
+export type SupabaseUserRow = {
+  id: number;
+  auth_user_id: string;
+  role_id: number;
+  name: string;
+  email: string;
+};
+
+/**
+ * Mapea la fila de Supabase al modelo User de tu app
+ * - role_id  → roleId
+ * - el resto queda igual
+ */
+export function mapSupabaseUserToUser(
+  supabaseUser: SupabaseUserRow
+): User {
+  return {
+    id: supabaseUser.id,
+    roleId: supabaseUser.role_id,
+    name: supabaseUser.name,
+    email: supabaseUser.email,
+  };
+}
+
+/**
+ * Login con email y password usando Supabase Auth
+ * Devuelve SIEMPRE un User con { id, roleId, name, email }
+ */
+export async function loginWithEmailAndPassword(
+  email: string,
+  password: string
+): Promise<User> {
+  // 1) Login en Supabase Auth
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    // Error de credenciales, usuario no existe, etc.
+    throw new Error(error.message);
+  }
+
+  if (!data.user) {
+    // Por seguridad, no debería pasar si no hay error
+    throw new Error("Usuario no autenticado");
+  }
+
+  // 2) Leer perfil en tu tabla "users"
+  const { data: userProfile, error: profileError } = await supabase
+    .from("users")
+    // Solo pedimos las columnas que necesitamos
+    .select("id, role_id, name, email, auth_user_id")
+    .eq("auth_user_id", data.user.id)
+    .single();
+
+  if (profileError || !userProfile) {
+    throw new Error("No se pudo cargar el perfil del usuario");
+  }
+
+  // 3) MAPEAR a tu tipo User antes de devolver
+  return mapSupabaseUserToUser(userProfile as SupabaseUserRow);
+}
+
+/**
+ * Logout: cierra sesión en Supabase
+ */
+export async function logoutUser(): Promise<void> {
+  await supabase.auth.signOut();
+}
+
+/**
+ * Restaurar sesión:
+ * - Consulta la sesión actual en Supabase
+ * - Si hay usuario, recupera su perfil en "users"
+ * - Devuelve un User con { id, roleId, name, email } o null
+ */
+export async function getStoredUser(): Promise<User | null> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  // Si no hay sesión activa, devolvemos null
+  if (!session?.user) return null;
+
+  const { data: userProfile, error } = await supabase
+    .from("users")
+    .select("id, role_id, name, email, auth_user_id")
+    .eq("auth_user_id", session.user.id)
+    .single();
+
+  if (error || !userProfile) {
+    // No hay perfil o ha fallado la consulta
+    return null;
+  }
+
+  // Mapeamos a User antes de devolver
+  return mapSupabaseUserToUser(userProfile as SupabaseUserRow);
+}

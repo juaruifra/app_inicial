@@ -1,11 +1,19 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Card, Text, Button, Avatar, useTheme, TextInput } from "react-native-paper";
+import {
+  Card,
+  Text,
+  Button,
+  Avatar,
+  useTheme,
+  TextInput,
+} from "react-native-paper";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useUserStore } from "../../store/userStore";
 import { FormAuthTextInput } from "../form/FormAuthTextInput";
+import AppHeader from "../layout/AppHeader";
 
 import {
   profileFormSchema,
@@ -13,7 +21,6 @@ import {
 } from "./profileForm.schema";
 
 export default function UserProfile() {
-  
   const theme = useTheme();
 
   // Usuario global desde Zustand
@@ -46,79 +53,95 @@ export default function UserProfile() {
 
   const getInitials = (name: string) => {
     return name
-        .trim()
-        .split(" ")
-        .slice(0, 2)
-        .map((word) => word[0]?.toUpperCase())
-        .join("");
-    };
+      .trim()
+      .split(" ")
+      .slice(0, 2)
+      .map((word) => word[0]?.toUpperCase())
+      .join("");
+  };
 
   return (
-    <View style={styles.container}>
-      <Card style={styles.card}>
-        <Card.Content style={styles.content}>
+    <View
+          style={[
+            styles.container,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
+      {/* Barra superior (SIN padding) */}
+      <AppHeader />
 
-        {/* Cabecera del perfil */}
-        <View style={styles.header}>
-            <Avatar.Text
+      {/* Contenido con padding */}
+      <View style={styles.content}>
+        <Card style={styles.card}>
+          <Card.Content style={styles.cardContent}>
+            {/* Cabecera del perfil */}
+            <View style={styles.header}>
+              <Avatar.Text
                 size={72}
                 label={getInitials(user.name)}
                 style={{ backgroundColor: theme.colors.primary }}
+              />
+
+              <Text variant="titleMedium" style={styles.title}>
+                Perfil de usuario
+              </Text>
+
+              <Text style={styles.role}>
+                Rol: {user.role === "ADMIN" ? "Administrador" : "Usuario"}
+              </Text>
+            </View>
+
+            {/* Nombre editable */}
+            <FormAuthTextInput
+              control={control}
+              name="name"
+              label="Nombre"
+              autoCapitalize="words"
+              left={<TextInput.Icon icon="account" />}
             />
 
-            <Text variant="titleMedium" style={styles.title}>
-                Perfil de usuario
-            </Text>
+            {/* Email solo lectura */}
+            <FormAuthTextInput
+              control={control}
+              name="email"
+              label="Correo electrónico"
+              disabled
+              defaultValue={user.email}
+              left={<TextInput.Icon icon="email" />}
+            />
 
-            <Text style={styles.role}>
-                Rol: {user.role === "ADMIN" ? "Administrador" : "Usuario"}
-            </Text>
-        </View>
-
-          {/* Nombre editable */}
-          <FormAuthTextInput
-            control={control}
-            name="name"
-            label="Nombre"
-            autoCapitalize="words"
-            left={<TextInput.Icon icon="account" />}
-          />
-
-          {/* Email solo lectura */}
-          <FormAuthTextInput
-            control={control}
-            name="email"
-            label="Correo electrónico"
-            disabled
-            defaultValue={user.email}
-            left={<TextInput.Icon icon="email" />}
-          />
-
-          {/* Botón guardar */}
-          <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            loading={isSubmitting}
-            style={styles.button}
-          >
-            Guardar cambios
-          </Button>
-        </Card.Content>
-      </Card>
+            {/* Botón guardar */}
+            <Button
+              mode="contained"
+              onPress={handleSubmit(onSubmit)}
+              loading={isSubmitting}
+              style={styles.button}
+            >
+              Guardar cambios
+            </Button>
+          </Card.Content>
+        </Card>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
     padding: 16,
   },
   card: {
     borderRadius: 16,
   },
-  content: {
-    //alignItems: "center",
+  cardContent: {
     gap: 12,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 8,
   },
   title: {
     marginTop: 8,
@@ -132,8 +155,4 @@ const styles = StyleSheet.create({
     marginTop: 16,
     alignSelf: "stretch",
   },
-  header: {
-    alignItems: "center",
-    marginBottom: 8,
-    },
 });
