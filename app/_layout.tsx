@@ -8,6 +8,7 @@ import {
 
 import { AuthProvider } from "../src/context/AuthContext";
 import { usePreferencesStore } from "../src/store/preferencesStore";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export default function RootLayout() {
   // Obtenemos estado y acciones del store de preferencias
@@ -16,6 +17,9 @@ export default function RootLayout() {
   const loadPreferences = usePreferencesStore(
     (state) => state.loadPreferences
   );
+
+  // Crear una instancia de QueryClient
+  const queryClient = new QueryClient();
 
   // Al arrancar la app cargamos las preferencias guardadas
   useEffect(() => {
@@ -28,14 +32,16 @@ export default function RootLayout() {
   }
 
   // Elegimos el tema de Paper según las preferencias
-  const theme =
-    themeMode === "dark" ? MD3DarkTheme : MD3LightTheme;
+  const theme = themeMode === "dark" ? MD3DarkTheme : MD3LightTheme;
 
   return (
-    <PaperProvider theme={theme}>
-      <AuthProvider>
-        <Slot />
-      </AuthProvider>
-    </PaperProvider>
+    //Envolver toda la app con QueryClientProvider
+    <QueryClientProvider client={queryClient}>
+      <PaperProvider theme={theme}>
+        <AuthProvider>
+          <Slot />
+        </AuthProvider>
+      </PaperProvider>
+    </QueryClientProvider>
   );
 }

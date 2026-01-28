@@ -1,189 +1,157 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList} from "react-native";
-import { ActivityIndicator, FAB, Searchbar, Text, useTheme } from "react-native-paper";
-import { Cliente } from "../../data/mockApi";
-import { getClientes,createCliente, deleteCliente } from "../../services/clientesService";
+import React, { useEffect, useMemo, useState } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
+import {
+  ActivityIndicator,
+  FAB,
+  Searchbar,
+  Text,
+  useTheme,
+} from "react-native-paper";
+import { router } from "expo-router";
+
 import ClienteItem from "./ClienteItem";
-import { router, useFocusEffect } from "expo-router";
-// Modal para crear / editar clientes
 import ClienteFormModal from "./form/ClienteFormModal";
-
-// Tipo de datos del formulario
 import { ClienteFormValues } from "./form/clienteForm.types";
-
 import { useConfirmAction } from "../../hooks/useConfirmAction";
 
+// ahora importamos el tipo desde src/types
+import { Cliente } from "../../types/Cliente";
+// usaremos React Query para listar
+import { useClientes } from "../../hooks/clientes/useClientes";
+import { useCreateCliente } from "../../hooks/clientes/useCreateCliente";
+import { useDeleteCliente } from "../../hooks/clientes/useDeleteCliente";
+import { deleteClienteApi, createClienteApi } from "../../services/clientesSupabaseService";
 
 export default function ClientesScreen() {
+  // Buscador
+  const [search, setSearch] = useState("");
+  // Control modal creación
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
-    const [clientes, setClientes] = useState<Cliente[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [search, setSearch] = useState("");
-    const [filteredClientes, setFilteredClientes] = useState<Cliente[]>([]);
+  const { confirm, ConfirmDialogUI } = useConfirmAction();
+  const theme = useTheme();
 
-    // Controla si el modal de cliente está abierto o cerrado
-    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+  // React Query: obtener lista de clientes desde Supabase
+  const {
+    data: clientes,      // array de Cliente[] o undefined
+    isLoading,
+    error,
+    refetch,             // por si quieres forzar recarga manual
+  } = useClientes();
 
-    const { confirm, ConfirmDialogUI } = useConfirmAction();
+  const createClienteMutation = useCreateCliente();
+  const deleteClienteMutation = useDeleteCliente();
 
-    const theme = useTheme();
-
-    const createInitialValues: ClienteFormValues = {
+  // Valores iniciales para el formulario de creación
+  const createInitialValues: ClienteFormValues = {
     nombre: "",
     nifCif: "",
     telefono: "",
     email: "",
     notas: "",
     activo: true,
+  };
+
+  // Filtrado de clientes en memoria según el texto de búsqueda
+  const filteredClientes = useMemo(() => {
+    if (!clientes) return [];
+
+    const text = search.toLowerCase().trim();
+    if (!text) return clientes;
+
+    return clientes.filter((cliente) => {
+      return (
+        cliente.nombre.toLowerCase().includes(text) ||
+        cliente.email?.toLowerCase().includes(text) ||
+        cliente.telefono?.includes(text)
+      );
+    });
+  }, [clientes, search]);
+
+  // Manejar borrado con confirmación
+  const handleDeleteCliente = (cliente: Cliente) => {
+    confirm({
+        title: "Borrar cliente",
+        message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
+        action: () => deleteClienteMutation.mutateAsync(cliente.id),
+    });
     };
 
-    const loadClientes = async () => {
-        try {
-            const data = await getClientes();
-            setClientes(data);
-            
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleDeleteCliente = (cliente: Cliente) => {
-
-        confirm({
-            title: "Borrar cliente",
-            message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
-            action: () => deleteCliente(cliente.id),
-            onSuccess: () => {
-                loadClientes();
-            },
-        });
-
-    };
-
-    // useEffect(() => {
-    //     loadClientes();   
-    // }, []);
-
-    // Utilizamos useFocusEffect para recargar al volver a la pantalla
-    useFocusEffect(
-        React.useCallback(() => {
-            // Cada vez que la pantalla gana el foco,
-            // recargamos la lista de clientes
-            loadClientes();
-        }, [])
-    );
-
-    useEffect(() => {
-
-        const text = search.toLowerCase().trim();
-
-        if (!text) {
-            setFilteredClientes(clientes);
-            return;
-        }
-
-        const filtered = clientes.filter((cliente) => {
-            return (
-            cliente.nombre.toLowerCase().includes(text) ||
-            cliente.email?.toLowerCase().includes(text) ||
-            cliente.telefono?.includes(text)
-            );
-        });
-
-        setFilteredClientes(filtered);
-
-    }, [search, clientes]);
-
-    if (isLoading) {
-        return (
-            <View>
-                <ActivityIndicator />
-            </View>
-        );
-    }
-
+  // Estados de carga / error
+  if (isLoading) {
     return (
-        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-            {/* Barra superior reutilizable */}
-            {/* <AppHeader title="Clientes" /> */}
-
-            {/* Contenido principal de clientes */}
-            <View style={styles.content}>
-
-                <Searchbar
-                placeholder="Buscar cliente"
-                value={search}
-                onChangeText={setSearch}
-                style={styles.searchbar}
-                />
-
-                {filteredClientes.length === 0 ? (
-                    <Text style={styles.emptyText}>
-                        No se han encontrado clientes
-                    </Text>
-                    ) : (
-                    <FlatList
-                        data={filteredClientes}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                        <ClienteItem cliente={item} 
-                            onPress={() => {
-                                //alert("Click cliente " + item.id);
-                                //router.push(`/clientes/${item.id}`);
-
-                                router.push({
-                                    pathname: "clientes/[id]",
-                                    params: { id: item.id.toString() },
-                                });
-                            }}
-                            onDelete={() => handleDeleteCliente(item)}
-                        />
-                        )}
-                    />
-                )}
-
-
-                <FAB
-                    icon="plus"
-                    onPress={() => 
-
-                        // Abrimos el modal de creación
-                        setIsCreateModalVisible(true)
-
-                    }
-                    style={styles.fab}
-                />
-
-            </View>
-
-            {/* Modal de creación de cliente */}
-            <ClienteFormModal
-            visible={isCreateModalVisible}
-            title="Crear cliente"
-            initialValues={createInitialValues}
-            onSubmit={async (data) => {
-
-                // Creamos el cliente en el mock
-                await createCliente(data);
-
-                // Recargamos la lista
-                await loadClientes();
-
-                // Cerramos el modal
-                setIsCreateModalVisible(false);
-            }}
-            onDismiss={() => {
-                // Cerramos el modal sin guardar
-                setIsCreateModalVisible(false);
-            }}
-            />
-
-            {/* Modal reutilizable */}
-            <ConfirmDialogUI />
-
-            
-        </View>
+      <View style={styles.center}>
+        <ActivityIndicator />
+      </View>
     );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Text>Error cargando clientes: {error.message}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <View style={styles.content}>
+        <Searchbar
+          placeholder="Buscar cliente"
+          value={search}
+          onChangeText={setSearch}
+          style={styles.searchbar}
+        />
+
+        {filteredClientes.length === 0 ? (
+          <Text style={styles.emptyText}>No se han encontrado clientes</Text>
+        ) : (
+          <FlatList
+            data={filteredClientes}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <ClienteItem
+                cliente={item}
+                onPress={() => {
+                  router.push({
+                    pathname: "clientes/[id]",
+                    params: { id: item.id.toString() },
+                  });
+                }}
+                onDelete={() => handleDeleteCliente(item)}
+              />
+            )}
+          />
+        )}
+
+        <FAB
+          icon="plus"
+          onPress={() => setIsCreateModalVisible(true)}
+          style={styles.fab}
+        />
+      </View>
+
+      {/* Modal de creación de cliente */}
+      <ClienteFormModal
+        visible={isCreateModalVisible}
+        title="Crear cliente"
+        initialValues={createInitialValues}
+        onSubmit={async (data) => {
+            await createClienteMutation.mutateAsync(data);
+            setIsCreateModalVisible(false);
+        }}
+        onDismiss={() => {
+          setIsCreateModalVisible(false);
+        }}
+      />
+
+      {/* Modal reutilizable de confirmación */}
+      <ConfirmDialogUI />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -195,21 +163,22 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingBottom: 80,
   },
-  subtitle: {
-    marginTop: 8,
-    opacity: 0.7,
-  },
   fab: {
     position: "absolute",
     right: 16,
     bottom: 16,
   },
-    searchbar: {    
-        marginBottom: 16,
-    },
-    emptyText: {
-        textAlign: "center",
-        marginTop: 40,
-        opacity: 0.6,
-    }
+  searchbar: {
+    marginBottom: 16,
+  },
+  emptyText: {
+    textAlign: "center",
+    marginTop: 40,
+    opacity: 0.6,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
