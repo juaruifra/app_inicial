@@ -8,7 +8,10 @@ export function useDeleteCliente() {
   return useMutation({
     mutationFn: (clienteId: number) => deleteClienteApi(clienteId),
     onSuccess: () => {
+      // Invalidar la caché de clientes para refrescar la lista
       queryClient.invalidateQueries({ queryKey: clientesQueryKey });
     },
+    // NO manejamos onError aquí, dejamos que se propague
+    // al catch en useConfirmAction para mostrar el error personalizado
   });
 }

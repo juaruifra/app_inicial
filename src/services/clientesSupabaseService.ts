@@ -128,10 +128,20 @@ export async function updateClienteApi(
 
 // Elimina un cliente por id.
 export async function deleteClienteApi(id: number): Promise<void> {
-  const { error } = await supabase.from("clientes").delete().eq("id", id);
+  const { error } = await supabase
+    .from("clientes")
+    .delete()
+    .eq("id", id);
 
   if (error) {
-    console.error("[deleteClienteApi] Error al borrar cliente:", error);
-    throw error;
+    //console.error("Error al borrar cliente:", error);
+    
+    // Detectar violación de foreign key (cliente tiene pedidos)
+    if (error.code === "23503") {
+      throw new Error("No se puede borrar el cliente porque tiene pedidos asociados");
+    }
+    
+    // Otros errores de base de datos
+    throw new Error(error.message || "Error al borrar el cliente");
   }
 }

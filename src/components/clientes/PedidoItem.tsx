@@ -1,10 +1,11 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Chip, List, Surface, Text, useTheme } from "react-native-paper";
-import { PedidoConDetalle } from "../../data/mockApi";
+//import { PedidoConDetalle } from "../../data/mockApi";
 import { formatDate } from "../../utils/date";
 import { getEstadoPedidoUI } from "../../utils/pedidos";
 import { formatNumber } from "../../utils/number";
+import { PedidoConDetalle } from "../../types/Pedido";
 
 
 type Props = {
