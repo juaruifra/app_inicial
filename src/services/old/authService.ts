@@ -3,10 +3,9 @@ import {
   getUser,
   saveToken,
   clearAuthStorage,
-} from "../storage/authStorage";
+} from "../../storage/authStorage";
 
-import { usuarios } from "../data/mockApi";
-import { User,credentials } from "../data/mockApi";
+import { User,credentials,usuarios } from "../../data/mockApi";
 
 // Función auxiliar para simular tiempo de espera (latencia de red)
 const delay = (ms: number) =>

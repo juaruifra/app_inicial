@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import { Cliente } from "../../data/mockApi";
 import {
   List,
   Surface,
@@ -8,6 +7,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
+import { Cliente } from "../../types/Cliente";
 
 type Props = {
   cliente: Cliente;

@@ -1,5 +1,5 @@
-import { clientes, listClientes, direccionesCliente,pedidos } from "../data/mockApi";
-import type { Cliente } from "../data/mockApi";
+import { clientes, listClientes, direccionesCliente,pedidos } from "../../data/mockApi";
+import type { Cliente } from "../../data/mockApi";
 
 // Simula un pequeño delay como si fuera una API real
 const wait = (ms = 300) =>

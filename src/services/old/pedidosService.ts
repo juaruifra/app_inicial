@@ -1,4 +1,4 @@
-import { PedidoConDetalle, pedidos,buildPedidoConDetalle } from "../data/mockApi";
+import { PedidoConDetalle, pedidos,buildPedidoConDetalle } from "../../data/mockApi";
 
 
 // Simula latencia
