@@ -12,7 +12,7 @@ import {
 } from "react-native-paper";
 import { useLocalSearchParams, router } from "expo-router";
 
-import { PedidoConDetalle } from "../../types/Pedido";
+//import { PedidoConDetalle } from "../../types/Pedido";
 
 import { useCliente } from "../../hooks/clientes/useCliente";
 import { useUpdateCliente } from "../../hooks/clientes/useUpdateCliente";

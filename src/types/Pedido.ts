@@ -17,17 +17,17 @@ export interface Pedido {
   fechaInicio: string;
   fechaFin: string;
   estado: EstadoPedido;
-  creadoPor: number;   // userId (auth.users / users)
+  creadoPor: number;   // userId (auth.users / users) --> en el futuro
   notas?: string;
 }
 
 /**
- * Pedido enriquecido para la UI
+ * Pedido enriquecido
  * NO es una tabla
- * Resultado de una query / composición
+ * Resultado de una consulta 
  */
 export interface PedidoConDetalle extends Pedido {
-  cliente: Cliente;
+  cliente?: Cliente;
   direccionEntrega?: DireccionCliente;
   direccionRecogida?: DireccionCliente;
   totalUnidades: number;

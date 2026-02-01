@@ -51,7 +51,7 @@ export async function loginWithEmailAndPassword(
     throw new Error("Usuario no autenticado");
   }
 
-  // 2) Leer perfil en tu tabla "users"
+  // Leer perfil en tu tabla "users"
   const { data: userProfile, error: profileError } = await supabase
     .from("users")
     // Solo pedimos las columnas que necesitamos
@@ -63,7 +63,7 @@ export async function loginWithEmailAndPassword(
     throw new Error("No se pudo cargar el perfil del usuario");
   }
 
-  // 3) MAPEAR a tu tipo User antes de devolver
+  // MAPEAR a tu tipo User antes de devolver
   return mapSupabaseUserToUser(userProfile as SupabaseUserRow);
 }
 

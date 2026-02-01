@@ -97,7 +97,7 @@ export async function createClienteApi(
     .single();
 
   if (error) {
-    console.error("[createClienteApi] Error al crear cliente:", error);
+    //console.error("[createClienteApi] Error al crear cliente:", error);
     throw error;
   }
 
@@ -119,7 +119,7 @@ export async function updateClienteApi(
     .single();
 
   if (error) {
-    console.error("[updateClienteApi] Error al actualizar cliente:", error);
+    //console.error("[updateClienteApi] Error al actualizar cliente:", error);
     throw error;
   }
 
