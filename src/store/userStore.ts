@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import type { User, RoleName } from "../data/mockApi";
+import { RoleName, User } from "../types/user";
+//import type { User, RoleName } from "../data/mockApi";
 
 /**
  * Usuario autenticado para la UI

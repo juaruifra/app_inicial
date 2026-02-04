@@ -82,18 +82,27 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
         anchor={
           <Pressable onPress={() => setMenuVisible(true)}>
             <View style={styles.avatarWrapper}>
-              <Avatar.Text
-                size={36}
-                label={user.name
-                  .split(" ")
-                  .map((w) => w[0])
-                  .join("")
-                  .toUpperCase()}
-                style={{
-                  backgroundColor: theme.colors.primary,
-                }}
-                color={theme.colors.onPrimary}
-              />
+              {user.avatarUrl ? (
+                // Si hay avatar, mostramos la imagen
+                <Avatar.Image
+                  size={36}
+                  source={{ uri: user.avatarUrl }}
+                />
+              ) : (
+                // Si no, mostramos las iniciales
+                <Avatar.Text
+                  size={36}
+                  label={user.name
+                    .split(" ")
+                    .map((w) => w[0])
+                    .join("")
+                    .toUpperCase()}
+                  style={{
+                    backgroundColor: theme.colors.primary,
+                  }}
+                  color={theme.colors.onPrimary}
+                />
+              )}
             </View>
           </Pressable>
         }

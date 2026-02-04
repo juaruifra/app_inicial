@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Pressable, ActivityIndicator } from "react-native";
 import {
   Card,
   Text,
@@ -12,6 +12,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useUserStore } from "../../store/userStore";
+import { useUpdateUserName } from "../../hooks/user/useUpdateUserName";
+
+import { useUploadAvatar } from "../../hooks/user/useUploadAvatar";
+import * as ImagePicker from "expo-image-picker";
+
 import { FormAuthTextInput } from "../form/FormAuthTextInput";
 import AppHeader from "../layout/AppHeader";
 
@@ -20,12 +25,20 @@ import {
   ProfileFormValues,
 } from "./profileForm.schema";
 
+
+
 export default function UserProfile() {
   const theme = useTheme();
 
   // Usuario global desde Zustand
   const user = useUserStore((state) => state.user);
-  const updateUser = useUserStore((state) => state.updateUser);
+
+  // Mutación para actualizar el nombre
+  const updateNameMutation = useUpdateUserName();
+
+  const uploadAvatarMutation = useUploadAvatar();
+
+  //const updateUser = useUserStore((state) => state.updateUser);
 
   // Formulario con validación
   const {
@@ -39,17 +52,51 @@ export default function UserProfile() {
     },
   });
 
-  // Guardar cambios en el store
-  const onSubmit = (data: ProfileFormValues) => {
-    updateUser({
-      name: data.name,
-    });
-  };
-
   // Seguridad extra
   if (!user) {
     return null;
   }
+
+  // Guardar cambios en BD y luego en el store
+  const onSubmit = (data: ProfileFormValues) => {
+    updateNameMutation.mutate({
+      userId: user.id,
+      name: data.name,
+    });
+  };
+
+
+  // Función para seleccionar y subir un avatar
+  const handlePickAvatar = async () => {
+    // Pedimos permiso para acceder a la galería
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== "granted") {
+      alert("Necesitamos permisos para acceder a tus fotos");
+      return;
+    }
+
+    // Abrimos el selector de imágenes
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true, // Permite recortar la imagen
+      aspect: [1, 1], // Proporción cuadrada para el avatar
+      quality: 0.8, // Calidad de la imagen (0-1)
+    });
+
+    // Si el usuario no canceló la selección
+    if (!result.canceled && result.assets[0]) {
+      const selectedImage = result.assets[0];
+      
+      // Subimos el avatar
+      uploadAvatarMutation.mutate({
+        userId: user.id,
+        fileUri: selectedImage.uri,
+        fileType: selectedImage.mimeType || "image/jpeg",
+      });
+    }
+  };
+
 
   const getInitials = (name: string) => {
     return name
@@ -76,11 +123,39 @@ export default function UserProfile() {
           <Card.Content style={styles.cardContent}>
             {/* Cabecera del perfil */}
             <View style={styles.header}>
-              <Avatar.Text
-                size={72}
-                label={getInitials(user.name)}
-                style={{ backgroundColor: theme.colors.primary }}
-              />
+              {/* Avatar clickable con indicador de que se puede cambiar */}
+              <Pressable onPress={handlePickAvatar} style={styles.avatarContainer}>
+                {user.avatarUrl ? (
+                  // Si hay avatar, mostramos la imagen
+                  <Avatar.Image
+                    size={72}
+                    source={{ uri: user.avatarUrl }}
+                  />
+                ) : (
+                  // Si no hay avatar, mostramos las iniciales
+                  <Avatar.Text
+                    size={72}
+                    label={getInitials(user.name)}
+                    style={{ backgroundColor: theme.colors.primary }}
+                  />
+                )}
+                
+                {/* Icono de cámara superpuesto para indicar que es clickable */}
+                <View style={styles.cameraIcon}>
+                  <Avatar.Icon 
+                    size={28} 
+                    icon="camera" 
+                    style={{ backgroundColor: theme.colors.primaryContainer }}
+                  />
+                </View>
+                
+                {/* Indicador de carga mientras sube */}
+                {uploadAvatarMutation.isPending && (
+                  <View style={styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                  </View>
+                )}
+              </Pressable>
 
               <Text variant="titleMedium" style={styles.title}>
                 Perfil de usuario
@@ -114,7 +189,7 @@ export default function UserProfile() {
             <Button
               mode="contained"
               onPress={handleSubmit(onSubmit)}
-              loading={isSubmitting}
+              loading={isSubmitting || updateNameMutation.isPending}
               style={styles.button}
             >
               Guardar cambios
@@ -154,5 +229,22 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 16,
     alignSelf: "stretch",
+  },
+  avatarContainer: {
+    position: "relative", // Para posicionar el icono encima
+  },
+  cameraIcon: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    borderRadius: 14,
+    overflow: "hidden",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 36,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

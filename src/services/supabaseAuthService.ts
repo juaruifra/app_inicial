@@ -1,6 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
-// Usamos el mismo tipo User que ya utilizas en el resto de la app
-import type { User } from "../data/mockApi";
+import { User } from "../types/user";
 
 // Fila tal y como viene de Supabase (nombres snake_case)
 export type SupabaseUserRow = {
@@ -9,6 +8,7 @@ export type SupabaseUserRow = {
   role_id: number;
   name: string;
   email: string;
+  avatar_url?: string;
 };
 
 /**
@@ -24,6 +24,7 @@ export function mapSupabaseUserToUser(
     roleId: supabaseUser.role_id,
     name: supabaseUser.name,
     email: supabaseUser.email,
+    avatarUrl: supabaseUser.avatar_url ?? undefined,
   };
 }
 
@@ -55,7 +56,7 @@ export async function loginWithEmailAndPassword(
   const { data: userProfile, error: profileError } = await supabase
     .from("users")
     // Solo pedimos las columnas que necesitamos
-    .select("id, role_id, name, email, auth_user_id")
+    .select("id, role_id, name, email, auth_user_id, avatar_url")
     .eq("auth_user_id", data.user.id)
     .single();
 
@@ -78,7 +79,7 @@ export async function logoutUser(): Promise<void> {
  * Restaurar sesión:
  * - Consulta la sesión actual en Supabase
  * - Si hay usuario, recupera su perfil en "users"
- * - Devuelve un User con { id, roleId, name, email } o null
+ * - Devuelve un User con { id, roleId, name, email, avatarUrl } o null
  */
 export async function getStoredUser(): Promise<User | null> {
   const {
@@ -90,7 +91,7 @@ export async function getStoredUser(): Promise<User | null> {
 
   const { data: userProfile, error } = await supabase
     .from("users")
-    .select("id, role_id, name, email, auth_user_id")
+    .select("id, role_id, name, email, auth_user_id, avatar_url")
     .eq("auth_user_id", session.user.id)
     .single();
 
