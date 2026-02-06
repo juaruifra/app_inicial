@@ -136,3 +136,20 @@ export async function uploadAndSaveAvatar(
   // Devolvemos la URL para actualizar el estado local
   return avatarUrl;
 }
+
+/**
+ * Elimina el avatar del usuario
+ * Pone avatar_url a null en la base de datos
+ * @param userId - ID del usuario
+ */
+export async function deleteUserAvatar(userId: number): Promise<void> {
+  // Actualizamos avatar_url a null en la tabla users
+  const { error } = await supabase
+    .from("users")
+    .update({ avatar_url: null })
+    .eq("id", userId);
+
+  if (error) {
+    throw new Error(`Error al eliminar el avatar: ${error.message}`);
+  }
+}

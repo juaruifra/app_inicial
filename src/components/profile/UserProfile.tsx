@@ -15,6 +15,7 @@ import { useUserStore } from "../../store/userStore";
 import { useUpdateUserName } from "../../hooks/user/useUpdateUserName";
 
 import { useUploadAvatar } from "../../hooks/user/useUploadAvatar";
+import { useDeleteAvatar } from "../../hooks/user/useDeleteAvatar";
 import * as ImagePicker from "expo-image-picker";
 
 import { useConfirmAction } from "../../hooks/useConfirmAction";
@@ -59,7 +60,18 @@ export default function UserProfile() {
     },
   });
 
-  const { showError, ConfirmDialogUI } = useConfirmAction();
+  const deleteAvatarMutation = useDeleteAvatar({
+    onSuccess: () => {
+      showSuccess("Avatar eliminado correctamente");
+    },
+    onError: (error) => {
+      showSnackbarError(
+        error instanceof Error ? error.message : "Error al eliminar el avatar"
+      );
+    },
+  });
+
+  const { showError, confirm, ConfirmDialogUI } = useConfirmAction();
 
   //const updateUser = useUserStore((state) => state.updateUser);
 
@@ -137,6 +149,19 @@ export default function UserProfile() {
     }
   };
 
+  // Función para eliminar el avatar (con confirmación)
+  const handleDeleteAvatar = () => {
+    confirm({
+      title: "Eliminar avatar",
+      message: "¿Estás seguro de que quieres eliminar tu avatar?",
+      action: () => {
+        deleteAvatarMutation.mutate({
+          userId: user.id,
+        });
+      },
+    });
+  };
+
 
   const getInitials = (name: string) => {
     return name
@@ -205,6 +230,20 @@ export default function UserProfile() {
                 Rol: {user.role === "ADMIN" ? "Administrador" : "Usuario"}
               </Text>
             </View>
+
+            {/* Botón para eliminar avatar (solo visible si hay avatar) */}
+            {user.avatarUrl && (
+              <Button
+                mode="text"
+                icon="delete"
+                onPress={handleDeleteAvatar}
+                loading={deleteAvatarMutation.isPending}
+                textColor={theme.colors.error}
+                style={{ marginTop: 8 }}
+              >
+                Eliminar avatar
+              </Button>
+            )}
 
             {/* Nombre editable */}
             <FormAuthTextInput
