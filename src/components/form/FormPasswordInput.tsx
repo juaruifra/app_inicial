@@ -19,11 +19,13 @@ import PasswordInput from "../PasswordInput";
 type Props<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
+  label?: string;
 };
 
 export function FormPasswordInput<T extends FieldValues>({
   control,
   name,
+  label,
 }: Props<T>) {
   return (
     <Controller
@@ -34,7 +36,8 @@ export function FormPasswordInput<T extends FieldValues>({
           <PasswordInput
             value={field.value}            // Valor actual
             onChangeText={field.onChange}  // Actualiza el formulario
-            error={!!fieldState.error}     // Marca error visual
+            error={!!fieldState.error} // Marca error visual
+            label={label}    
           />
 
           {/* Mensaje de error */}

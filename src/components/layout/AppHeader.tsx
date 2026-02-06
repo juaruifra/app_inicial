@@ -142,7 +142,10 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
 
         <Menu.Item
           title="Cambiar contraseña"
-          onPress={() => setMenuVisible(false)}
+          onPress={() => {
+            router.push("/changePassword");
+            setMenuVisible(false);
+          }}
         />
 
         <Divider />

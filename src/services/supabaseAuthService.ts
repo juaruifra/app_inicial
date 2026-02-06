@@ -36,7 +36,7 @@ export async function loginWithEmailAndPassword(
   email: string,
   password: string
 ): Promise<User> {
-  // 1) Login en Supabase Auth
+  // Login en Supabase Auth
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -102,4 +102,36 @@ export async function getStoredUser(): Promise<User | null> {
 
   // Mapeamos a User antes de devolver
   return mapSupabaseUserToUser(userProfile as SupabaseUserRow);
+}
+
+/**
+ * Cambia la contraseña del usuario autenticado
+ * Primero valida la contraseña actual y luego actualiza
+ * @param email - Email del usuario (tomado del store)
+ * @param currentPassword - Contraseña actual (para validar)
+ * @param newPassword - Nueva contraseña
+ */
+export async function changePassword(
+  email: string,
+  currentPassword: string,
+  newPassword: string
+): Promise<void> {
+  // Validamos la contraseña actual haciendo un re-login
+  const { error: loginError } = await supabase.auth.signInWithPassword({
+    email,
+    password: currentPassword,
+  });
+
+  if (loginError) {
+    throw new Error("La contraseña actual es incorrecta");
+  }
+
+  // Si la validación fue exitosa, cambiamos la contraseña
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  if (updateError) {
+    throw new Error(`Error al cambiar la contraseña: ${updateError.message}`);
+  }
 }
