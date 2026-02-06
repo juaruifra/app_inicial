@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
 import { Slot } from "expo-router";
-import {
-  PaperProvider,
-  MD3LightTheme,
-  MD3DarkTheme,
-} from "react-native-paper";
+import { PaperProvider } from "react-native-paper";
+import { lightTheme, darkTheme } from "../src/theme/index";
 
 import { AuthProvider } from "../src/context/AuthContext";
 import { usePreferencesStore } from "../src/store/preferencesStore";
@@ -31,8 +28,8 @@ export default function RootLayout() {
     return null;
   }
 
-  // Elegimos el tema de Paper según las preferencias
-  const theme = themeMode === "dark" ? MD3DarkTheme : MD3LightTheme;
+  // Elegimos el tema personalizado según las preferencias
+  const theme = themeMode === "dark" ? darkTheme : lightTheme;
 
   return (
     //Envolver toda la app con QueryClientProvider

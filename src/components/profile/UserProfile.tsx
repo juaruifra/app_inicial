@@ -17,6 +17,9 @@ import { useUpdateUserName } from "../../hooks/user/useUpdateUserName";
 import { useUploadAvatar } from "../../hooks/user/useUploadAvatar";
 import * as ImagePicker from "expo-image-picker";
 
+import { useConfirmAction } from "../../hooks/useConfirmAction";
+import { useSnackbar } from "../../hooks/useSnackbar";
+
 import { FormAuthTextInput } from "../form/FormAuthTextInput";
 import AppHeader from "../layout/AppHeader";
 
@@ -34,11 +37,33 @@ export default function UserProfile() {
   const user = useUserStore((state) => state.user);
 
   // Mutación para actualizar el nombre
-  const updateNameMutation = useUpdateUserName();
+  const updateNameMutation = useUpdateUserName({
+    onSuccess: () => {
+      showSuccess("Nombre actualizado correctamente");
+    },
+    onError: (error) => {
+      showSnackbarError(
+        error instanceof Error ? error.message : "Error al actualizar el nombre"
+      );
+    },
+  });
 
-  const uploadAvatarMutation = useUploadAvatar();
+  const uploadAvatarMutation = useUploadAvatar({
+    onSuccess: () => {
+      showSuccess("Avatar actualizado correctamente");
+    },
+    onError: (error) => {
+      showSnackbarError(
+        error instanceof Error ? error.message : "Error al subir el avatar"
+      );
+    },
+  });
+
+  const { showError, ConfirmDialogUI } = useConfirmAction();
 
   //const updateUser = useUserStore((state) => state.updateUser);
+
+  const { showSuccess, showError: showSnackbarError, SnackbarUI } = useSnackbar();
 
   // Formulario con validación
   const {
@@ -72,7 +97,10 @@ export default function UserProfile() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
     if (status !== "granted") {
-      alert("Necesitamos permisos para acceder a tus fotos");
+      showError({
+        title: "Permisos necesarios",
+        message: "Necesitamos permisos para acceder a tus fotos",
+      });
       return;
     }
 
@@ -87,6 +115,18 @@ export default function UserProfile() {
     // Si el usuario no canceló la selección
     if (!result.canceled && result.assets[0]) {
       const selectedImage = result.assets[0];
+      
+      // Validamos el tamaño del archivo (máximo 5MB)
+      const MAX_SIZE_MB = 5;
+      const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+      
+      if (selectedImage.fileSize && selectedImage.fileSize > MAX_SIZE_BYTES) {
+        showError({
+          title: "Imagen muy grande",
+          message: `La imagen es demasiado grande. El tamaño máximo es ${MAX_SIZE_MB} MB.`,
+        });
+        return;
+      }
       
       // Subimos el avatar
       uploadAvatarMutation.mutate({
@@ -197,6 +237,13 @@ export default function UserProfile() {
           </Card.Content>
         </Card>
       </View>
+
+      {/* Modal de confirmación/error */}
+      <ConfirmDialogUI />
+
+      {/* Mensajes de éxito/error */}
+      <SnackbarUI />
+
     </View>
   );
 }

@@ -88,10 +88,9 @@ export async function uploadAvatarToStorage(
   const response = await fetch(fileUri);
   const blob = await response.blob();
 
-  // Nombre único: userId-timestamp con la extensión correcta
-  const timestamp = Date.now();
-  const extension = getFileExtension(fileType);
-  const fileName = `${userId}-${timestamp}${extension}`;
+    // Nombre fijo basado en el ID del usuario (se reemplaza automáticamente)
+    const extension = getFileExtension(fileType);
+    const fileName = `${userId}${extension}`;
 
   // Subimos el archivo al bucket 'avatars' en Supabase Storage
   const { data, error } = await supabase.storage
@@ -110,7 +109,10 @@ export async function uploadAvatarToStorage(
     .from("avatars")
     .getPublicUrl(data.path);
 
-  return publicUrlData.publicUrl;
+    // Añadimos un timestamp para evitar problemas de caché
+    const urlWithCacheBuster = `${publicUrlData.publicUrl}?t=${Date.now()}`;
+
+    return urlWithCacheBuster;
 }
 
 /**
