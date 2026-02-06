@@ -13,6 +13,7 @@ import { useAuth } from "../../context/AuthContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useUserStore } from "../../store/userStore";
+import { getInitials } from "../../utils/user";
 
 type AppHeaderProps = {
   options?: any;
@@ -92,11 +93,7 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
                 // Si no, mostramos las iniciales
                 <Avatar.Text
                   size={36}
-                  label={user.name
-                    .split(" ")
-                    .map((w) => w[0])
-                    .join("")
-                    .toUpperCase()}
+                  label={getInitials(user.name)}
                   style={{
                     backgroundColor: theme.colors.primary,
                   }}
