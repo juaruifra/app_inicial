@@ -11,7 +11,7 @@ export const changePasswordSchema = z
     
     newPassword: z
       .string()
-      .min(4, "La nueva contraseña debe tener al menos 4 caracteres")
+      .min(6, "La nueva contraseña debe tener al menos 6 caracteres")
       .max(50, "La contraseña es demasiado larga"),
     
     confirmPassword: z

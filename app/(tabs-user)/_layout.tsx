@@ -84,6 +84,7 @@ export default function AppLayout() {
       <Tabs.Screen name="clientes/[id]" options={{ href: null }} />
       <Tabs.Screen name="preferencias" options={{ href: null }} />
       <Tabs.Screen name="perfil" options={{ href: null }} />
+      <Tabs.Screen name="changePassword" options={{ href: null }} />
     </Tabs>
   );
 }
