@@ -20,7 +20,8 @@ import { getInitials } from "../../utils/user";
 import { FormAuthTextInput } from "../form/FormAuthTextInput";
 import AppHeader from "../layout/AppHeader";
 
-import { profileFormSchema,ProfileFormValues} from "./profileForm.schema";
+// import { profileFormSchema,ProfileFormValues} from "./profileForm.schema";
+import { createProfileFormSchema,ProfileFormValues} from "./profileForm.schema";
 import { useAvatarManagement } from "../../hooks/user/useAvatarManagement";
 
 import { useTranslation } from "react-i18next";
@@ -47,6 +48,8 @@ export default function UserProfile() {
       );
     },
   });
+
+  const profileFormSchema = createProfileFormSchema(t);
 
   // Formulario con validación
   const {

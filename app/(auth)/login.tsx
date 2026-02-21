@@ -7,7 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AuthHeader from "../../src/components/AuthHeader";
 import { FormAuthTextInput } from "../../src/components/form/FormAuthTextInput";
 import { FormPasswordInput } from "../../src/components/form/FormPasswordInput";
-import { LoginFormValues, loginSchema } from "../../src/components/auth/login.schema";
+//import { LoginFormValues, loginSchema } from "../../src/components/auth/login.schema";
+import { LoginFormValues, createLoginSchema } from "../../src/components/auth/login.schema";
+
 import { useAuth } from "../../src/context/AuthContext";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -25,7 +27,7 @@ const Login: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
 
-
+  const loginSchema = createLoginSchema(t);
   /*
     useForm crea y controla el formulario
     - resolver conecta Zod con el formulario

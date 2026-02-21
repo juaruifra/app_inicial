@@ -4,6 +4,7 @@ import { Modal, Portal, Text, useTheme } from "react-native-paper";
 
 import ClienteForm from "./ClienteForm";
 import { ClienteFormValues } from "./clienteForm.types";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   // Controla si el modal se muestra o no
@@ -33,6 +34,7 @@ export default function ClienteFormModal({
 }: Props) {
 
   const theme = useTheme();
+  const { t } = useTranslation();
   return (
     // Portal asegura que el modal se renderiza por encima de toda la app
     <Portal>
@@ -56,7 +58,7 @@ export default function ClienteFormModal({
             defaultValues={initialValues}
             onSubmit={onSubmit}
             onCancel={onDismiss}
-            submitLabel="Guardar"
+            submitLabel={t("common.save")}
           />
         </ScrollView>
       </Modal>

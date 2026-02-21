@@ -112,7 +112,7 @@ export default function ClientesScreen() {
         />
 
         {filteredClientes.length === 0 ? (
-          <Text style={styles.emptyText}>No se han encontrado clientes</Text>
+          <Text style={styles.emptyText}>{t("clients.noResults")}</Text>
         ) : (
           <FlatList
             data={filteredClientes}
@@ -142,7 +142,7 @@ export default function ClientesScreen() {
       {/* Modal de creación de cliente */}
       <ClienteFormModal
         visible={isCreateModalVisible}
-        title="Crear cliente"
+        title={t("clients.create")}
         initialValues={createInitialValues}
         onSubmit={async (data) => {
             await createClienteMutation.mutateAsync(data);

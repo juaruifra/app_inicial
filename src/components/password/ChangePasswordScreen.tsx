@@ -11,8 +11,13 @@ import { useSnackbar } from "../../hooks/useSnackbar";
 import { FormPasswordInput } from "../form/FormPasswordInput";
 import AppHeader from "../layout/AppHeader";
 
+// import {
+//   changePasswordSchema,
+//   ChangePasswordFormValues,
+// } from "./changePassword.schema";
+
 import {
-  changePasswordSchema,
+  createChangePasswordSchema,
   ChangePasswordFormValues,
 } from "./changePassword.schema";
 
@@ -41,6 +46,8 @@ export default function ChangePasswordScreen() {
       );
     },
   });
+
+  const changePasswordSchema = createChangePasswordSchema(t);
 
   // Formulario con validación
   const {

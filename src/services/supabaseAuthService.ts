@@ -1,5 +1,6 @@
 import { supabase } from "../lib/supabaseClient";
 import { User } from "../types/user";
+import i18n from "../i18n/i18n";
 
 // Fila tal y como viene de Supabase (nombres snake_case)
 export type SupabaseUserRow = {
@@ -49,7 +50,7 @@ export async function loginWithEmailAndPassword(
 
   if (!data.user) {
     // Por seguridad, no debería pasar si no hay error
-    throw new Error("Usuario no autenticado");
+    throw new Error(i18n.t("errors.userNotAuthenticated"));
   }
 
   // Leer perfil en tu tabla "users"
@@ -61,7 +62,7 @@ export async function loginWithEmailAndPassword(
     .single();
 
   if (profileError || !userProfile) {
-    throw new Error("No se pudo cargar el perfil del usuario");
+    throw new Error(i18n.t("errors.userProfileLoadError"));
   }
 
   // MAPEAR a tu tipo User antes de devolver
@@ -123,7 +124,7 @@ export async function changePassword(
   });
 
   if (loginError) {
-    throw new Error("La contraseña actual es incorrecta");
+    throw new Error(i18n.t("errors.currentPasswordWrong"));
   }
 
   // Si la validación fue exitosa, cambiamos la contraseña
@@ -132,6 +133,6 @@ export async function changePassword(
   });
 
   if (updateError) {
-    throw new Error(`Error al cambiar la contraseña: ${updateError.message}`);
+    throw new Error(i18n.t("errors.passwordChangeError", { message: updateError.message }));
   }
 }

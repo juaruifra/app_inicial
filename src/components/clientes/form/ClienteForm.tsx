@@ -5,7 +5,8 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ClienteFormValues } from "./clienteForm.types";
-import { clienteFormSchema } from "./clienteForm.schema";
+//import { clienteFormSchema } from "./clienteForm.schema";
+import { createClienteFormSchema } from "./clienteForm.schema";
 import { FormAuthTextInput } from "../../form/FormAuthTextInput";
 
 import { useTranslation } from "react-i18next";
@@ -17,12 +18,19 @@ type Props = {
   submitLabel: string;
 };
 
+
+
 export default function ClienteForm({
   defaultValues,
   onSubmit,
   onCancel,
   submitLabel,
 }: Props) {
+
+  const { t } = useTranslation();
+
+  const clienteFormSchema = createClienteFormSchema(t);
+
   const {
     control,
     handleSubmit,
@@ -31,8 +39,6 @@ export default function ClienteForm({
     defaultValues,
     resolver: zodResolver(clienteFormSchema),
   });
-
-  const { t } = useTranslation();
 
   return (
     <View>

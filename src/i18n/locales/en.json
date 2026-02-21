@@ -42,11 +42,13 @@
     "deleteMessage": "Are you sure you want to delete {{name}}?",
     "loadError": "Error loading clients:",
     "notFound": "Client not found",
+    "noResults": "No clients found",
     "noEmail": "No email",
     "noPhone": "No phone",
     "active": "Active",
     "inactive": "Inactive",
     "dataTab": "Client Data",
+    "create": "Create client",
     "edit": "Edit client",
     "delete": "Delete client",
     "errorDeleteOrders": "Cannot delete client because it has associated orders",
@@ -93,6 +95,26 @@
     "noAccount": "Don't have an account?",
     "register": "Register now",
     "invalidCredentials": "Invalid email or password"
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email address",
+    "passwordMin": "Password must be at least {{count}} characters",
+    "passwordMax": "Password is too long",
+    "currentPasswordRequired": "Current password is required",
+    "confirmPasswordRequired": "You must confirm the new password",
+    "passwordsMismatch": "Passwords do not match",
+    "nameRequired": "Name is required",
+    "nameMin": "Name must be at least {{count}} characters",
+    "nameMax": "Name is too long",
+    "nifCifInvalid": "Tax ID format is invalid",
+    "phoneInvalid": "Phone number format is invalid"
+  },
+  "errors": {
+    "userNotAuthenticated": "User not authenticated",
+    "profileLoadError": "Could not load user profile",
+    "currentPasswordWrong": "Current password is incorrect",
+    "passwordChangeError": "Error changing password: {{message}}"
   },
   "common": {
     "save": "Save",

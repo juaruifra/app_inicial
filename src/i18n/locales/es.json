@@ -42,11 +42,13 @@
     "deleteMessage": "¿Seguro que quieres borrar a {{name}}?",
     "loadError": "Error cargando clientes:",
     "notFound": "Cliente no encontrado",
+    "noResults": "No se han encontrado clientes",
     "noEmail": "Sin email",
     "noPhone": "Sin teléfono",
     "active": "Activo",
     "inactive": "Inactivo",
     "dataTab": "Datos del Cliente",
+    "create": "Crear cliente",
     "edit": "Editar cliente",
     "delete": "Borrar cliente",
     "errorDeleteOrders": "No se puede borrar el cliente porque tiene pedidos asociados",
@@ -93,6 +95,26 @@
     "noAccount": "¿No tienes una cuenta?",
     "register": "Regístrate ahora",
     "invalidCredentials": "Correo o contraseña incorrectos"
+  },
+  "validation": {
+    "emailRequired": "El correo es obligatorio",
+    "emailInvalid": "Correo electrónico inválido",
+    "passwordMin": "La contraseña debe tener al menos {{count}} caracteres",
+    "passwordMax": "La contraseña es demasiado larga",
+    "currentPasswordRequired": "La contraseña actual es obligatoria",
+    "confirmPasswordRequired": "Debes confirmar la nueva contraseña",
+    "passwordsMismatch": "Las contraseñas no coinciden",
+    "nameRequired": "El nombre es obligatorio",
+    "nameMin": "El nombre debe tener al menos {{count}} caracteres",
+    "nameMax": "El nombre es demasiado largo",
+    "nifCifInvalid": "NIF / CIF no tiene un formato válido",
+    "phoneInvalid": "El teléfono no tiene un formato válido"
+  },
+  "errors": {
+    "userNotAuthenticated": "Usuario no autenticado",
+    "profileLoadError": "No se pudo cargar el perfil del usuario",
+    "currentPasswordWrong": "La contraseña actual es incorrecta",
+    "passwordChangeError": "Error al cambiar la contraseña: {{message}}"
   },
   "common": {
     "save": "Guardar",
