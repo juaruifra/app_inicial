@@ -13,8 +13,11 @@ import {
 import AppHeader from "../layout/AppHeader";
 import { usePreferencesStore } from "../../store/preferencesStore";
 
+import { useTranslation } from "react-i18next";
+
 export default function PreferenciasScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   // Estado global de preferencias (Zustand)
   const {
@@ -31,7 +34,10 @@ export default function PreferenciasScreen() {
   const isDark = currentTheme === "dark";
 
   // Texto legible del idioma actual
-  const languageLabel = language === "es" ? "Español" : "Inglés";
+  //const languageLabel = language === "es" ? "Español" : "Inglés";
+  const languageLabel = language === "es" 
+  ? t("preferences.language.spanish") 
+  : t("preferences.language.english");
 
   return (
     <View style={[{ flex: 1 }, { backgroundColor: theme.colors.background }]}>
@@ -44,19 +50,19 @@ export default function PreferenciasScreen() {
           <Card.Content>
             {/* Título principal */}
             <Text variant="titleMedium" style={styles.title}>
-              Preferencias
+              {t("preferences.title")}
             </Text>
 
             {/* ===== BLOQUE: TEMA ===== */}
             <Text variant="labelLarge" style={styles.sectionTitle}>
-              Tema de la aplicación
+              {t("preferences.theme.title")}
             </Text>
 
             <View style={styles.row}>
               <View style={styles.textBlock}>
-                <Text>Modo oscuro</Text>
+                <Text>{t("preferences.theme.darkMode")}</Text>
                 <Text style={styles.helper}>
-                  Activa o desactiva el tema oscuro de la app
+                  {t("preferences.theme.helper")}
                 </Text>
               </View>
 
@@ -73,7 +79,7 @@ export default function PreferenciasScreen() {
 
             {/* ===== BLOQUE: IDIOMA ===== */}
             <Text variant="labelLarge" style={styles.sectionTitle}>
-              Idioma
+              {t("preferences.language.title")}
             </Text>
 
             <Menu
@@ -96,21 +102,21 @@ export default function PreferenciasScreen() {
                   setLanguage("es");
                   setLanguageMenuVisible(false);
                 }}
-                title="Español"
+                title={t("preferences.language.spanish")}
               />
               <Menu.Item
                 onPress={() => {
                   setLanguage("en");
                   setLanguageMenuVisible(false);
                 }}
-                title="Inglés"
+                title={t("preferences.language.english")}
               />
             </Menu>
 
-            <Text style={styles.helper}>
+            {/* <Text style={styles.helper}>
               El idioma se usará para los textos de la aplicación
               más adelante.
-            </Text>
+            </Text> */}
           </Card.Content>
         </Card>
       </View>

@@ -1,5 +1,6 @@
 import React , { useState } from "react";
 import ConfirmDialog from "../components/common/ConfirmDialog";
+import { useTranslation } from "react-i18next";
 
 type ConfirmDialogState = {
   visible: boolean;
@@ -26,6 +27,8 @@ export function useConfirmAction() {
         action: () => Promise<void> | void;
         onSuccess?: () => void;
     };
+
+    const { t } = useTranslation();
 
     /**
      * Abre un diálogo de confirmación y,
@@ -73,8 +76,8 @@ export function useConfirmAction() {
             title={dialog.title}
             message={dialog.message}
             variant={dialog.variant}
-            confirmText={dialog.variant === "confirm" ? "Borrar" : "Aceptar"}
-            cancelText="Cancelar"
+            confirmText={dialog.variant === "confirm" ? t("common.delete") : t("common.accept")}
+            cancelText={t("common.cancel")}
             onConfirm={async () => {
 
                 // Solo en confirmación ejecutamos la acción
@@ -95,11 +98,11 @@ export function useConfirmAction() {
                         const message =
                         error instanceof Error
                             ? error.message
-                            : "Ha ocurrido un error inesperado";
+                            : t("common.unexpectedError");
 
                         setDialog({
                             visible: true,
-                            title: "Error",
+                            title: t("common.error"),
                             message,
                             variant: "error",
                         });

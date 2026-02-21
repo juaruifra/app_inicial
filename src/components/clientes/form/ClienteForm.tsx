@@ -8,6 +8,8 @@ import { ClienteFormValues } from "./clienteForm.types";
 import { clienteFormSchema } from "./clienteForm.schema";
 import { FormAuthTextInput } from "../../form/FormAuthTextInput";
 
+import { useTranslation } from "react-i18next";
+
 type Props = {
   defaultValues: ClienteFormValues;
   onSubmit: (data: ClienteFormValues) => void;
@@ -30,13 +32,15 @@ export default function ClienteForm({
     resolver: zodResolver(clienteFormSchema),
   });
 
+  const { t } = useTranslation();
+
   return (
     <View>
 
       <FormAuthTextInput
               control={control}
               name="nombre"
-              label="Nombre"
+              label={t("clients.form.name")}
               //keyboardType="email-address"
               autoCapitalize="none"
               left={<TextInput.Icon icon="account" />} //email
@@ -45,7 +49,7 @@ export default function ClienteForm({
       <FormAuthTextInput
               control={control}
               name="nifCif"
-              label="NIF / CIF"
+              label={t("clients.form.nifCif")}
               autoCapitalize="none"
               left={<TextInput.Icon icon="card-account-details-outline" />} 
             />
@@ -53,7 +57,7 @@ export default function ClienteForm({
       <FormAuthTextInput
               control={control}
               name="email"
-              label="Correo electrónico"
+              label={t("clients.form.email")}
               keyboardType="email-address"
               autoCapitalize="none"
               left={<TextInput.Icon icon="email" />}
@@ -62,7 +66,7 @@ export default function ClienteForm({
       <FormAuthTextInput
               control={control}
               name="telefono"
-              label="Teléfono"
+              label={t("clients.form.phone")}
               keyboardType="phone-pad"
               autoCapitalize="none"
               left={<TextInput.Icon icon="phone" />}
@@ -71,7 +75,7 @@ export default function ClienteForm({
       <FormAuthTextInput
         control={control}
         name="notas"
-        label="Notas"
+        label={t("clients.form.notes")}
         autoCapitalize="none"
         multiline
         numberOfLines={3}
@@ -84,7 +88,7 @@ export default function ClienteForm({
         name="activo"
         render={({ field }) => (
           <View style={styles.switchRow}>
-            <Text>Activo</Text>
+            <Text>{t("clients.active")}</Text>
             <Switch
               value={field.value}
               onValueChange={field.onChange}
@@ -95,7 +99,7 @@ export default function ClienteForm({
 
       {/* Acciones */}
       <View style={styles.actions}>
-        <Button onPress={onCancel}>Cancelar</Button>
+        <Button onPress={onCancel}>{t("common.cancel")}</Button>
         <Button mode="contained" onPress={handleSubmit(onSubmit)}>
           {submitLabel}
         </Button>

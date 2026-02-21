@@ -7,9 +7,15 @@ import { AuthProvider } from "../src/context/AuthContext";
 import { usePreferencesStore } from "../src/store/preferencesStore";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+// Inicialización de i18n
+import "../src/i18n/i18n"; 
+import i18n from "i18next";
+
 export default function RootLayout() {
   // Obtenemos estado y acciones del store de preferencias
   const themeMode = usePreferencesStore((state) => state.theme);
+  // Obtenemos el idioma seleccionado para configurarlo
+  const language = usePreferencesStore((state) => state.language);
   const isReady = usePreferencesStore((state) => state.isReady);
   const loadPreferences = usePreferencesStore(
     (state) => state.loadPreferences
@@ -22,6 +28,11 @@ export default function RootLayout() {
   useEffect(() => {
     loadPreferences();
   }, []);
+
+  // Actualizamos el idioma de i18n
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language]);
 
   // Mientras no estén listas, no renderizamos la app
   if (!isReady) {

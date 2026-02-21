@@ -23,10 +23,13 @@ import AppHeader from "../layout/AppHeader";
 import { profileFormSchema,ProfileFormValues} from "./profileForm.schema";
 import { useAvatarManagement } from "../../hooks/user/useAvatarManagement";
 
+import { useTranslation } from "react-i18next";
+
 
 
 export default function UserProfile() {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   // Usuario global desde Zustand
   const user = useUserStore((state) => state.user);
@@ -36,11 +39,11 @@ export default function UserProfile() {
   // Mutación para actualizar el nombre
   const updateNameMutation = useUpdateUserName({
     onSuccess: () => {
-      showSuccess("Nombre actualizado correctamente");
+      showSuccess(t("profile.nameUpdated"));
     },
     onError: (error) => {
       showSnackbarError(
-        error instanceof Error ? error.message : "Error al actualizar el nombre"
+        error instanceof Error ? error.message : t("profile.nameUpdateError")
       );
     },
   });
@@ -131,11 +134,11 @@ export default function UserProfile() {
               </Pressable>
 
               <Text variant="titleMedium" style={styles.title}>
-                Perfil de usuario
+                {t("profile.title")}
               </Text>
 
               <Text style={styles.role}>
-                Rol: {user.role === "ADMIN" ? "Administrador" : "Usuario"}
+                {t("profile.role")} {user.role === "ADMIN" ? t("home.roleAdmin") : t("home.roleUser")}
               </Text>
             </View>
 
@@ -149,7 +152,7 @@ export default function UserProfile() {
                 textColor={theme.colors.error}
                 style={{ marginTop: 8 }}
               >
-                Eliminar avatar
+                {t("profile.deleteAvatar")}
               </Button>
             )}
 
@@ -157,7 +160,7 @@ export default function UserProfile() {
             <FormAuthTextInput
               control={control}
               name="name"
-              label="Nombre"
+              label={t("common.name")}
               autoCapitalize="words"
               left={<TextInput.Icon icon="account" />}
             />
@@ -166,7 +169,7 @@ export default function UserProfile() {
             <FormAuthTextInput
               control={control}
               name="email"
-              label="Correo electrónico"
+              label={t("common.email")}
               disabled
               defaultValue={user.email}
               left={<TextInput.Icon icon="email" />}
@@ -179,7 +182,7 @@ export default function UserProfile() {
               loading={isSubmitting || updateNameMutation.isPending}
               style={styles.button}
             >
-              Guardar cambios
+              {t("profile.saveChanges")}
             </Button>
           </Card.Content>
         </Card>

@@ -3,9 +3,12 @@ import { View, StyleSheet } from "react-native";
 import AppHeader from "../layout/AppHeader";
 import { Text, useTheme } from "react-native-paper";
 
+import { useTranslation } from "react-i18next";
+
 export default function PedidosScreen() {
 
   const theme = useTheme();
+  const { t } = useTranslation();
 
     return (
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -15,7 +18,7 @@ export default function PedidosScreen() {
         {/* Contenido principal de la pagina de pedidos */}
         <View style={styles.content}>
           <Text variant="titleMedium">
-            Desde aquí se realizará la gestión de pedidos
+            {t("orders.subtitle")}
           </Text>
 
         </View>

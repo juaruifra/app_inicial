@@ -16,8 +16,11 @@ import {
   ChangePasswordFormValues,
 } from "./changePassword.schema";
 
+import { useTranslation } from "react-i18next";
+
 export default function ChangePasswordScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const user = useUserStore((state) => state.user);
   
   // Hook para mensajes
@@ -26,7 +29,7 @@ export default function ChangePasswordScreen() {
   // Hook para cambiar contraseña
   const changePasswordMutation = useChangePassword({
     onSuccess: () => {
-      showSuccess("Contraseña cambiada correctamente");
+      showSuccess(t("password.success"));
       // Limpiamos el formulario
       reset();
       // Volvemos atrás después de 1.5 segundos
@@ -34,7 +37,7 @@ export default function ChangePasswordScreen() {
     },
     onError: (error) => {
       showError(
-        error instanceof Error ? error.message : "Error al cambiar la contraseña"
+        error instanceof Error ? error.message : t("password.error")
       );
     },
   });
@@ -75,28 +78,28 @@ export default function ChangePasswordScreen() {
       {/* Contenido */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Card style={styles.card}>
-          <Card.Title title="Cambiar contraseña" />
+          <Card.Title title={t("password.title")} />
           <Card.Content style={styles.cardContent}>
 
             {/* Contraseña actual */}
             <FormPasswordInput
               control={control}
               name="currentPassword"
-              label="Contraseña actual"
+              label={t("password.currentPassword")}
             />
 
             {/* Nueva contraseña */}
             <FormPasswordInput
               control={control}
               name="newPassword"
-              label="Nueva contraseña"
+              label={t("password.newPassword")}
             />
 
             {/* Confirmar contraseña */}
             <FormPasswordInput
               control={control}
               name="confirmPassword"
-              label="Confirmar contraseña"
+              label={t("password.confirmPassword")}
             />
 
             {/* Botón guardar */}
@@ -106,7 +109,7 @@ export default function ChangePasswordScreen() {
               loading={isSubmitting || changePasswordMutation.isPending}
               style={styles.button}
             >
-              Cambiar contraseña
+              {t("password.changeButton")}
             </Button>
 
             {/* Botón cancelar */}
@@ -116,7 +119,7 @@ export default function ChangePasswordScreen() {
               disabled={changePasswordMutation.isPending}
               style={styles.cancelButton}
             >
-              Cancelar
+              {t("common.cancel")}
             </Button>
           </Card.Content>
         </Card>

@@ -26,8 +26,12 @@ import { ClienteFormValues } from "./form/clienteForm.types";
 import { useConfirmAction } from "../../hooks/useConfirmAction";
 import { usePedidosByCliente } from "../../hooks/pedidos/usePedidosByCliente";
 
+import { useTranslation } from "react-i18next";
+
+
 export default function ClienteDetalleScreen() {
   const theme = useTheme();
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams();
 
   const clienteId =
@@ -74,7 +78,7 @@ export default function ClienteDetalleScreen() {
   if (error || !cliente) {
     return (
       <View style={styles.center}>
-        <Text>Cliente no encontrado</Text>
+        <Text>{t("clients.notFound")}</Text>
       </View>
     );
   }
@@ -90,8 +94,8 @@ export default function ClienteDetalleScreen() {
 
   const handleDeleteCliente = () => {
     confirm({
-      title: "Borrar cliente",
-      message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
+      title: t("clients.deleteTitle"),
+      message: t("clients.deleteMessage", { name: cliente.nombre }),
       action: () => deleteClienteMutation.mutateAsync(cliente.id),
       onSuccess: () => {
         router.replace("/clientes");
@@ -113,8 +117,8 @@ export default function ClienteDetalleScreen() {
             setActiveTab(value as "info" | "pedidos")
           }
           buttons={[
-            { value: "info", label: "Datos del Cliente" },
-            { value: "pedidos", label: "Pedidos" },
+            { value: "info", label: t("clients.dataTab") },
+            { value: "pedidos", label: t("tabs.orders") },
           ]}
         />
       </View>
@@ -132,7 +136,7 @@ export default function ClienteDetalleScreen() {
             <Card style={styles.card}>
               <Card.Content>
                 <List.Item
-                  title="Email"
+                  title={t("clients.form.email")}
                   description={cliente.email || "—"}
                   left={(props) => (
                     <List.Icon {...props} icon="email-outline" />
@@ -142,7 +146,7 @@ export default function ClienteDetalleScreen() {
                 <Divider />
 
                 <List.Item
-                  title="DNI / CIF"
+                  title={t("clients.form.nifCif")}
                   description={cliente.nifCif || "—"}
                   left={(props) => (
                     <List.Icon
@@ -155,7 +159,7 @@ export default function ClienteDetalleScreen() {
                 <Divider />
 
                 <List.Item
-                  title="Teléfono"
+                  title={t("clients.form.phone")}
                   description={cliente.telefono || "—"}
                   left={(props) => (
                     <List.Icon {...props} icon="phone-outline" />
@@ -165,7 +169,7 @@ export default function ClienteDetalleScreen() {
                 <Divider />
 
                 <List.Item
-                  title="Notas"
+                  title={t("clients.form.notes")}
                   description={cliente.notas || "—"}
                   descriptionNumberOfLines={3}
                   left={(props) => (
@@ -176,8 +180,8 @@ export default function ClienteDetalleScreen() {
                 <Divider />
 
                 <List.Item
-                  title="Estado"
-                  description={cliente.activo ? "Activo" : "Inactivo"}
+                  title={t("clients.form.status")}
+                  description={cliente.activo ? t("clients.active") : t("clients.inactive")}
                   left={(props) => (
                     <List.Icon
                       {...props}
@@ -198,7 +202,7 @@ export default function ClienteDetalleScreen() {
               style={{ marginTop: 16 }}
               onPress={() => setIsEditModalVisible(true)}
             >
-              Editar cliente
+              {t("clients.edit")}
             </Button>
 
             <Button
@@ -209,7 +213,7 @@ export default function ClienteDetalleScreen() {
               icon="trash-can-outline"
               onPress={handleDeleteCliente}
             >
-              Borrar cliente
+              {t("clients.delete")}
             </Button>
           </>
         )}
@@ -217,14 +221,14 @@ export default function ClienteDetalleScreen() {
         {activeTab === "pedidos" && (
           <>
             <Text variant="titleMedium" style={{ marginBottom: 8 }}>
-              Pedidos
+              {t("tabs.orders")}
             </Text>
 
             {isLoadingPedidos ? (
               <ActivityIndicator style={{ marginTop: 8 }} />
             ) : pedidos.length === 0 ? (
               <Text style={{ marginTop: 8 }}>
-                Este cliente no tiene pedidos
+                {t("clients.noOrders")}
               </Text>
             ) : (
               pedidos.map((p) => (
@@ -241,7 +245,7 @@ export default function ClienteDetalleScreen() {
 
       <ClienteFormModal
         visible={isEditModalVisible}
-        title="Editar cliente"
+        title={t("clients.edit")}
         initialValues={editInitialValues}
         onSubmit={async (data) => {
           await updateClienteMutation.mutateAsync({

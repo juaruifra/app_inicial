@@ -10,6 +10,7 @@ import { FormPasswordInput } from "../../src/components/form/FormPasswordInput";
 import { LoginFormValues, loginSchema } from "../../src/components/auth/login.schema";
 import { useAuth } from "../../src/context/AuthContext";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -22,6 +23,8 @@ const Login: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const theme = useTheme();
+  const { t } = useTranslation();
+
 
   /*
     useForm crea y controla el formulario
@@ -59,7 +62,7 @@ const Login: React.FC = () => {
     } catch (error: any) {
       // Error real de autenticación (credenciales incorrectas)
       setAuthError(
-        error?.message ?? "Correo o contraseña incorrectos"
+        error?.message ?? t("login.invalidCredentials")
       );
     } finally {
       setIsSubmitting(false);
@@ -72,15 +75,15 @@ const Login: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <AuthHeader
-        title="Bienvenido"
-        subtitle="Introduce tus credenciales para continuar"
+        title={t("login.welcome")}
+        subtitle={t("login.subtitle")}
       />
 
       {/* Input de email */}
       <FormAuthTextInput
         control={control}
         name="email"
-        label="Correo electrónico"
+        label={t("common.email")}
         keyboardType="email-address"
         autoCapitalize="none"
         left={<TextInput.Icon icon="email" />}
@@ -106,7 +109,7 @@ const Login: React.FC = () => {
 
 
       <Button mode="text" style={styles.forgot}>
-        ¿Olvidaste tu contraseña?
+        {t("login.forgotPassword")}
       </Button>
 
       {/* El submit pasa primero por Zod */}
@@ -117,10 +120,10 @@ const Login: React.FC = () => {
         loading={isSubmitting}
         disabled={isSubmitting}
       >
-        Iniciar Sesión
+        {t("login.signIn")}
       </Button>
 
-      <Text style={styles.or}>O continúa con</Text>
+      <Text style={styles.or}>{t("login.orContinueWith")}</Text>
 
       <Button
         mode="outlined"
@@ -132,9 +135,9 @@ const Login: React.FC = () => {
       </Button>
 
       <Text style={styles.register}>
-        ¿No tienes una cuenta?{" "}
+        {t("login.noAccount")}{" "}
         <Text style={styles.registerLink}>
-          Regístrate ahora
+          {t("login.register")}
         </Text>
       </Text>
     </View>

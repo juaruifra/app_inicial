@@ -1,5 +1,6 @@
 import { supabase } from "../lib/supabaseClient";
 import { Cliente } from "../types/Cliente";
+import i18n from "../i18n/i18n";
 
 /**
  * Tipo que representa la fila cruda tal y como viene de Supabase.
@@ -138,10 +139,10 @@ export async function deleteClienteApi(id: number): Promise<void> {
     
     // Detectar violación de foreign key (cliente tiene pedidos)
     if (error.code === "23503") {
-      throw new Error("No se puede borrar el cliente porque tiene pedidos asociados");
+      throw new Error(i18n.t("clients.errorDeleteOrders"));
     }
     
     // Otros errores de base de datos
-    throw new Error(error.message || "Error al borrar el cliente");
+    throw new Error(error.message || i18n.t("common.unexpectedError"));
   }
 }

@@ -3,6 +3,8 @@ import { StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 import type { TextInputProps } from "react-native-paper";
 
+import { useTranslation } from "react-i18next";
+
 // Definimos un nuevo tipo de props para nuestro componente PasswordInput
 // Partimos de TextInputProps pero eliminamos ("Omit") las props secureTextEntry y right
 // porque estas las vamos a controlar nosotros internamente
@@ -15,6 +17,8 @@ const PasswordInput: React.FC<PasswordInputProps> = (props) => {
   // Declaramos un estado bool para saber si la contraseña debe mostrarse o no
   // Por defecto: false. Contraseña oculta
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const { t } = useTranslation();
+
 
   // Devolvemos el TextInput de React Native Paper configurado como campo de contraseña
   return (
@@ -22,7 +26,7 @@ const PasswordInput: React.FC<PasswordInputProps> = (props) => {
       // Es la forma de pasar todas las propiedades al componente desde el componente original
       {...props}
       // Por si no se le pasa la propiedad label, le ponemos una por defecto
-      label={props.label ?? "Contraseña"}
+      label={props.label ?? t("common.password")}
       mode="outlined"
       // Controla si se muestra o no la contraseña
       secureTextEntry={!showPassword}

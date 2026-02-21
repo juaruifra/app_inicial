@@ -14,6 +14,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useUserStore } from "../../store/userStore";
 import { getInitials } from "../../utils/user";
+import { useTranslation } from "react-i18next";
 
 type AppHeaderProps = {
   options?: any;
@@ -27,6 +28,7 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
   const [menuVisible, setMenuVisible] = React.useState(false);
 
   const theme = useTheme();
+  const { t } = useTranslation();
 
   if (!isAuthenticated) {
     return null;
@@ -125,7 +127,7 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
         <Divider />
 
         <Menu.Item
-          title="Preferencias"
+          title={t("header.preferences")}
           onPress={() => {
             router.push("/preferencias");
             setMenuVisible(false);
@@ -133,7 +135,7 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
         />
 
         <Menu.Item
-          title="Perfil"
+          title={t("header.profile")}
           onPress={() => {
             router.push("/perfil");
             setMenuVisible(false);
@@ -141,7 +143,7 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
         />
 
         <Menu.Item
-          title="Cambiar contraseña"
+          title={t("header.changePassword")}
           onPress={() => {
             router.push("/changePassword");
             setMenuVisible(false);
@@ -151,7 +153,7 @@ export default function AppHeader({ options, back }: AppHeaderProps) {
         <Divider />
 
         <Menu.Item
-          title="Cerrar sesión"
+          title={t("header.logout")}
           onPress={async () => {
             setMenuVisible(false);
             await logout();

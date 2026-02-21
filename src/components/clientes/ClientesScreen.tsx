@@ -20,7 +20,9 @@ import { Cliente } from "../../types/Cliente";
 import { useClientes } from "../../hooks/clientes/useClientes";
 import { useCreateCliente } from "../../hooks/clientes/useCreateCliente";
 import { useDeleteCliente } from "../../hooks/clientes/useDeleteCliente";
-import { deleteClienteApi, createClienteApi } from "../../services/clientesSupabaseService";
+//import { deleteClienteApi, createClienteApi } from "../../services/clientesSupabaseService";
+import { useTranslation } from "react-i18next";
+
 
 export default function ClientesScreen() {
   // Buscador
@@ -30,6 +32,7 @@ export default function ClientesScreen() {
 
   const { confirm, ConfirmDialogUI } = useConfirmAction();
   const theme = useTheme();
+  const { t } = useTranslation();
 
   // React Query: obtener lista de clientes desde Supabase
   const {
@@ -71,8 +74,10 @@ export default function ClientesScreen() {
   // Manejar borrado con confirmación
   const handleDeleteCliente = (cliente: Cliente) => {
     confirm({
-        title: "Borrar cliente",
-        message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
+        //title: "Borrar cliente",
+        //message: `¿Seguro que quieres borrar a ${cliente.nombre}?`,
+        title: t("clients.deleteTitle"),
+        message: t("clients.deleteMessage", { name: cliente.nombre }),
         action: () => deleteClienteMutation.mutateAsync(cliente.id),
     });
     };
@@ -89,7 +94,7 @@ export default function ClientesScreen() {
   if (error) {
     return (
       <View style={styles.center}>
-        <Text>Error cargando clientes: {error.message}</Text>
+        <Text>{t("clients.loadError")}: {error.message}</Text>
       </View>
     );
   }
@@ -100,7 +105,7 @@ export default function ClientesScreen() {
     >
       <View style={styles.content}>
         <Searchbar
-          placeholder="Buscar cliente"
+          placeholder={t("clients.searchPlaceholder")}
           value={search}
           onChangeText={setSearch}
           style={styles.searchbar}

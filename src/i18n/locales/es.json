@@ -1,0 +1,112 @@
+{
+  "tabs": {
+    "home": "Inicio",
+    "orders": "Pedidos",
+    "clients": "Clientes",
+    "inventory": "Inventario"
+  },
+  "preferences": {
+    "title": "Preferencias",
+    "theme": {
+      "title": "Tema de la aplicación",
+      "darkMode": "Modo oscuro",
+      "helper": "Activa o desactiva el tema oscuro de la app"
+    },
+    "language": {
+      "title": "Idioma",
+      "spanish": "Español",
+      "english": "Inglés"
+    }
+  },
+  "home": {
+    "welcome": "Bienvenido,",
+    "roleAdmin": "Administrador",
+    "roleUser": "Usuario",
+    "subtitle": "Desde aquí puedes acceder a los distintos módulos de la aplicación y gestionar tu trabajo diario.",
+    "profile": "Perfil",
+    "profileDesc": "Ver y editar tus datos",
+    "preferences": "Preferencias",
+    "preferencesDesc": "Tema e idioma de la aplicación",
+    "clients": "Clientes",
+    "clientsDesc": "Gestión de clientes"
+  },
+  "header": {
+    "preferences": "Preferencias",
+    "profile": "Perfil",
+    "changePassword": "Cambiar contraseña",
+    "logout": "Cerrar sesión"
+  },
+  "clients": {
+    "searchPlaceholder": "Buscar clientes...",
+    "deleteTitle": "Borrar cliente",
+    "deleteMessage": "¿Seguro que quieres borrar a {{name}}?",
+    "loadError": "Error cargando clientes:",
+    "notFound": "Cliente no encontrado",
+    "noEmail": "Sin email",
+    "noPhone": "Sin teléfono",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "dataTab": "Datos del Cliente",
+    "edit": "Editar cliente",
+    "delete": "Borrar cliente",
+    "errorDeleteOrders": "No se puede borrar el cliente porque tiene pedidos asociados",
+    "noOrders": "Este cliente no tiene pedidos",
+    "form": {
+      "name": "Nombre",
+      "nifCif": "NIF / CIF",
+      "email": "Correo electrónico",
+      "phone": "Teléfono",
+      "notes": "Notas",
+      "status": "Estado"
+    }
+  },
+  "profile": {
+    "title": "Perfil de usuario",
+    "role": "Rol:",
+    "deleteAvatar": "Eliminar avatar",
+    "saveChanges": "Guardar cambios",
+    "nameUpdated": "Nombre actualizado correctamente",
+    "nameUpdateError": "Error al actualizar el nombre"
+  },
+  "password": {
+    "title": "Cambiar contraseña",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "changeButton": "Cambiar contraseña",
+    "success": "Contraseña cambiada correctamente",
+    "error": "Error al cambiar la contraseña"
+  },
+  "orders": {
+    "subtitle": "Desde aquí se realizará la gestión de pedidos"
+  },
+  "inventory": {
+    "subtitle": "Desde aquí se realizará la gestión de inventario"
+  },
+  "login": {
+    "welcome": "Bienvenido",
+    "subtitle": "Introduce tus credenciales para continuar",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "signIn": "Iniciar Sesión",
+    "orContinueWith": "O continúa con",
+    "noAccount": "¿No tienes una cuenta?",
+    "register": "Regístrate ahora",
+    "invalidCredentials": "Correo o contraseña incorrectos"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "confirm": "Confirmar",
+    "accept": "Aceptar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "unexpectedError": "Ha ocurrido un error inesperado",
+    "password": "Contraseña"
+  }
+}

@@ -8,6 +8,7 @@ import {
 } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { Cliente } from "../../types/Cliente";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   cliente: Cliente;
@@ -20,6 +21,7 @@ export default function ClienteItem({ cliente, onPress, onDelete }: Props) {
   const isDeletingRef = useRef(false);
 
   const theme = useTheme();
+  const { t } = useTranslation();
   const isActivo = cliente.activo;
 
   // Colores claros pero reconocibles
@@ -35,9 +37,9 @@ export default function ClienteItem({ cliente, onPress, onDelete }: Props) {
 
         // Texto secundario (email o teléfono)
         description={
-          (cliente.email ?? "Sin email") +
+          (cliente.email ?? t("clients.noEmail")) +
           " - " +
-          (cliente.telefono ?? "Sin teléfono")
+          (cliente.telefono ?? t("clients.noPhone"))
         }
         descriptionNumberOfLines={1}
 
@@ -76,7 +78,7 @@ export default function ClienteItem({ cliente, onPress, onDelete }: Props) {
                 fontWeight: "700",
               }}
             >
-              {isActivo ? "Activo" : "Inactivo"}
+              {isActivo ? t("clients.active") : t("clients.inactive")}
             </Chip>
 
             {/* Botón borrar (MISMA lógica que antes) */}

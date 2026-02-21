@@ -4,12 +4,13 @@ import { useAuth } from "../../src/context/AuthContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useUserStore } from "../../src/store/userStore";
 import { useTheme } from "react-native-paper";
+import { useTranslation } from "react-i18next";
 
 export default function AppLayout() {
   const { isAuthenticated, isLoading } = useAuth();
   const user = useUserStore((state) => state.user);
   const theme = useTheme();
-
+  const { t } = useTranslation();
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -45,7 +46,8 @@ export default function AppLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: "Inicio",
+          //title: "Inicio",
+          title: t("tabs.home"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
@@ -55,7 +57,8 @@ export default function AppLayout() {
       <Tabs.Screen
         name="pedidos"
         options={{
-          title: "Pedidos",
+          // title: "Pedidos",
+          title: t("tabs.orders"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="clipboard-list"
@@ -69,7 +72,8 @@ export default function AppLayout() {
       <Tabs.Screen
         name="clientes"
         options={{
-          title: "Clientes",
+          //title: "Clientes",
+          title: t("tabs.clients"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="account-group"
@@ -83,7 +87,8 @@ export default function AppLayout() {
       <Tabs.Screen
         name="inventario"
         options={{
-          title: "Inventario",
+          //title: "Inventario",
+          title: t("tabs.inventory"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="warehouse" color={color} size={size} />
           ),

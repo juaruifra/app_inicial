@@ -9,6 +9,8 @@ import {
   Icon,
 } from "react-native-paper";
 
+import { useTranslation } from "react-i18next";
+
 /**
  * Props del diálogo reutilizable
  * - confirm: Cancelar + Aceptar (con acción)
@@ -36,6 +38,7 @@ export default function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const isError = variant === "error";
 
   // Colores según variante
@@ -50,6 +53,7 @@ export default function ConfirmDialog({
   const iconColor = isError
     ? theme.colors.error
     : theme.colors.primary;
+    
 
   return (
     <Portal>

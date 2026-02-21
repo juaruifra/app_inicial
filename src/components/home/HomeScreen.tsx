@@ -12,10 +12,12 @@ import {
 import { router } from "expo-router";
 import AppHeader from "../layout/AppHeader";
 import { useUserStore } from "../../store/userStore";
+import { useTranslation } from "react-i18next";
 
 export default function HomeScreen() {
   const theme = useTheme();
   const user = useUserStore((state) => state.user);
+  const { t } = useTranslation();
 
   // Mientras el usuario se restaura desde storage
   if (!user) {
@@ -50,8 +52,7 @@ export default function HomeScreen() {
 
             <View style={styles.userInfo}>
               <Text variant="titleMedium">
-                Bienvenido,
-                <Text style={{ fontWeight: "bold" }}> {user.name}</Text>
+                {t("home.welcome")} <Text style={{ fontWeight: "bold" }}> {user.name}</Text>
               </Text>
 
               <Chip
@@ -71,7 +72,9 @@ export default function HomeScreen() {
                 }}
                 icon={isAdmin ? "shield-account" : "account-check"}
               >
-                {isAdmin ? "Administrador" : "Usuario"}
+                {/* {isAdmin ? "Administrador" : "Usuario"} */}
+                {isAdmin ? t("home.roleAdmin") : t("home.roleUser")}
+
               </Chip>
             </View>
           </Card.Content>
@@ -85,15 +88,15 @@ export default function HomeScreen() {
             { color: theme.colors.onSurfaceVariant },
           ]}
         >
-          Desde aquí puedes acceder a los distintos módulos de la aplicación y
-          gestionar tu trabajo diario.
+          {t("home.subtitle")}
         </Text>
 
         {/* Acciones rápidas */}
         <Card style={styles.actionsCard}>
           <List.Item
-            title="Perfil"
-            description="Ver y editar tus datos"
+            //title="Perfil"
+            title={t("home.profile")}
+            description={t("home.profileDesc")}
             left={(props) => (
               <List.Icon {...props} icon="account-circle-outline" />
             )}
@@ -101,8 +104,8 @@ export default function HomeScreen() {
           />
 
           <List.Item
-            title="Preferencias"
-            description="Tema e idioma de la aplicación"
+            title={t("home.preferences")}
+            description={t("home.preferencesDesc")}
             left={(props) => (
               <List.Icon {...props} icon="cog-outline" />
             )}
@@ -111,8 +114,8 @@ export default function HomeScreen() {
 
           
           <List.Item
-            title="Clientes"
-            description="Gestión de clientes"
+            title={t("home.clients")}
+            description={t("home.clientsDesc")}
             left={(props) => (
               <List.Icon {...props} icon="account-group-outline" />
             )}
