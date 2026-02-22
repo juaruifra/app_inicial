@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   Card,
@@ -15,6 +15,8 @@ import { usePreferencesStore } from "../../store/preferencesStore";
 
 import { useTranslation } from "react-i18next";
 
+import { useBiometricAuth } from "../../hooks/useBiometricAuth";
+
 export default function PreferenciasScreen() {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -25,6 +27,8 @@ export default function PreferenciasScreen() {
     language,
     setTheme,
     setLanguage,
+    biometricEnabled,
+    setBiometricEnabled,
   } = usePreferencesStore();
 
   // Controla si el menú de idioma está abierto
@@ -38,6 +42,36 @@ export default function PreferenciasScreen() {
   const languageLabel = language === "es" 
   ? t("preferences.language.spanish") 
   : t("preferences.language.english");
+
+  // Hook de biometría
+  const { checkBiometricSupport, checkBiometricEnrolled, authenticate } = useBiometricAuth();
+
+  // Controlar si el dispositivo soporta biometria y tiene configurada alguna
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+
+  // Comprobamos al montar el componente
+  useEffect(() => {
+    const checkBiometric = async () => {
+      const supported = await checkBiometricSupport();
+      const enrolled = await checkBiometricEnrolled();
+      setBiometricAvailable(supported && enrolled);
+    };
+    checkBiometric();
+  }, []);
+
+  // Cuando el usuario activa la biometría, pedimos que la confirme
+  const handleBiometricToggle = async (value: boolean) => {
+    if (value) {
+      // Si quiere activar, primero debe autenticarse
+      const success = await authenticate(t("biometric.confirmToEnable"));
+      if (success) {
+        setBiometricEnabled(true);
+      }
+    } else {
+      // Desactivar no requiere confirmación
+      setBiometricEnabled(false);
+    }
+  };
 
   return (
     <View style={[{ flex: 1 }, { backgroundColor: theme.colors.background }]}>
@@ -117,6 +151,36 @@ export default function PreferenciasScreen() {
               El idioma se usará para los textos de la aplicación
               más adelante.
             </Text> */}
+
+            {/* ===== BLOQUE: BIOMETRÍA ===== */}
+            {biometricAvailable && (
+              <>
+                <Divider style={styles.divider} />
+                
+                <Text variant="labelLarge" style={styles.sectionTitle}>
+                  {t("preferences.biometric.title")}
+                </Text>
+
+                <View style={styles.row}>
+                  <View style={styles.textBlock}>
+                    <Text>{t("preferences.biometric.enable")}</Text>
+                    <Text style={styles.helper}>
+                      {t("preferences.biometric.helper")}
+                    </Text>
+                  </View>
+
+                  <Switch
+                    value={biometricEnabled}
+                    onValueChange={handleBiometricToggle}
+                    color={theme.colors.primary}
+                  />
+                </View>
+              </>
+            )}
+
+
+
+
           </Card.Content>
         </Card>
       </View>

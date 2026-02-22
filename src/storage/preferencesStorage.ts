@@ -11,6 +11,7 @@ const PREFERENCES_KEY = "app_preferences";
 export type StoredPreferences = {
   theme: "light" | "dark";
   language: "es" | "en";
+  biometricEnabled: boolean;
 };
 
 /**

@@ -11,30 +11,40 @@ import {
 type PreferencesState = {
   theme: "light" | "dark";
   language: "es" | "en";
+  biometricEnabled: boolean;
   isReady: boolean; // antes isHydrated
 
   setTheme: (theme: PreferencesState["theme"]) => void;
   setLanguage: (language: PreferencesState["language"]) => void;
+  setBiometricEnabled: (enabled: boolean) => void;
   loadPreferences: () => Promise<void>;
 };
 
 export const usePreferencesStore = create<PreferencesState>((set, get) => ({
   theme: "light",
   language: "es",
+  biometricEnabled: false,
   isReady: false,
 
   setTheme: (theme) => {
     set({ theme });
 
-    const { language } = get();
-    savePreferences({ theme, language });
+    const { language, biometricEnabled } = get();
+    savePreferences({ theme, language, biometricEnabled });
   },
 
   setLanguage: (language) => {
     set({ language });
 
-    const { theme } = get();
-    savePreferences({ theme, language });
+    const { theme, biometricEnabled } = get();
+    savePreferences({ theme, language, biometricEnabled });
+  },
+
+  setBiometricEnabled: (biometricEnabled) => {
+    set({ biometricEnabled });
+
+    const { theme, language } = get();
+    savePreferences({ theme, language, biometricEnabled });
   },
 
   /**
@@ -47,6 +57,7 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
       set({
         theme: stored.theme,
         language: stored.language,
+        biometricEnabled: stored.biometricEnabled ?? false,
       });
     }
 

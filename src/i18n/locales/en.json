@@ -16,6 +16,19 @@
       "title": "Language",
       "spanish": "Spanish",
       "english": "English"
+    },
+    "biometric": {
+      "title": "Security",
+      "enable": "Biometric unlock",
+      "helper": "Use your fingerprint or face to access the app"
+    }
+  },
+  "biometric": {
+    "confirmToEnable": "Confirm your identity to enable",
+    "locked": {
+      "title": "App locked",
+      "subtitle": "Use your fingerprint or face to unlock",
+      "button": "Unlock"
     }
   },
   "home": {

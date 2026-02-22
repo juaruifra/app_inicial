@@ -42,6 +42,7 @@ export const AuthProvider: React.FC<{
   const setUser = useUserStore((state) => state.setUser);
   const clearUser = useUserStore((state) => state.clearUser);
   const user = useUserStore((state) => state.user);
+  const setIsLocked = useUserStore((state) => state.setIsLocked);
 
   /*
     Restaurar sesión al arrancar la app
@@ -84,6 +85,8 @@ export const AuthProvider: React.FC<{
       ...loggedUser,
       role: loggedUser.roleId === 2 ? "ADMIN" : "NORMAL",
     });
+
+    setIsLocked(false);  // Desbloquear porque hizo login manual
   };
 
   /*

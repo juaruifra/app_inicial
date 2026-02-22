@@ -16,6 +16,19 @@
       "title": "Idioma",
       "spanish": "Español",
       "english": "Inglés"
+    },
+    "biometric": {
+      "title": "Seguridad",
+      "enable": "Desbloqueo biométrico",
+      "helper": "Usa tu huella o rostro para acceder a la app"
+    }
+  },
+  "biometric": {
+    "confirmToEnable": "Confirma tu identidad para activar",
+    "locked": {
+      "title": "App bloqueada",
+      "subtitle": "Usa tu huella o rostro para desbloquear",
+      "button": "Desbloquear"
     }
   },
   "home": {

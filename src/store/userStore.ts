@@ -24,6 +24,9 @@ type UserState = {
 
   // Permite actualizar datos del usuario (perfil)
   updateUser: (data: Partial<AuthUser>) => void;
+
+  isLocked: boolean;
+  setIsLocked: (locked: boolean) => void;
 };
 
 /**
@@ -32,6 +35,9 @@ type UserState = {
 export const useUserStore = create<UserState>((set) => ({
   // Al iniciar la app no hay usuario cargado
   user: null,
+
+  // La app empieza bloqueada (para biometría)
+  isLocked: true,
 
   // Guardamos el usuario completo
   setUser: (user) =>
@@ -43,6 +49,7 @@ export const useUserStore = create<UserState>((set) => ({
   clearUser: () =>
     set({
       user: null,
+      isLocked: true
     }),
 
   // Actualizamos solo los campos que cambian
@@ -50,4 +57,7 @@ export const useUserStore = create<UserState>((set) => ({
     set((state) => ({
       user: state.user ? { ...state.user, ...data } : null,
     })),
+
+  // Cambia el estado de bloqueo
+  setIsLocked: (locked) => set({ isLocked: locked }),
 }));
